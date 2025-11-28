@@ -1,0 +1,782 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.equal &mdash; pathbundle 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pathbundle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../src.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pathbundle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.equal</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.equal</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">src.utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="c1">## LOAD RAW TRAJECTORY</span>
+<div class="viewcode-block" id="read_h5py">
+<a class="viewcode-back" href="../../src.html#src.equal.read_h5py">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_h5py</span><span class="p">(</span><span class="n">load_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert h5 file to python dictionary.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_raw_for_n_sessions`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        load_dir (str): path to h5py file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        keys (list): list of keys in the h5py file</span>
+<span class="sd">        data_dict (dict): dictionary of data in the h5py file</span>
+<span class="sd">        tracksize (int): number of frames in the trajectory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># print(&quot;Keys: %s&quot; % f.keys())</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="n">x</span><span class="p">][()]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+    <span class="n">tracksize</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;tracks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">keys</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">,</span> <span class="n">tracksize</span></div>
+
+
+
+<div class="viewcode-block" id="get_realtime_all">
+<a class="viewcode-back" href="../../src.html#src.equal.get_realtime_all">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_realtime_all</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="n">tracksize</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load timestamp csv file.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_raw_for_n_sessions`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        load_dir (str): path to timestamp csv file</span>
+<span class="sd">        tracksize (int): number of frames in the trajectory</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        realtime_all (np.ndarray): array of timestamps in seconds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">df_timestamp</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span>
+    <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span>
+    <span class="p">)</span>  <span class="c1"># in nano-seconds</span>
+    <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;datetime&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span>
+    <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">realtime_all</span> <span class="o">=</span> <span class="n">df_timestamp</span><span class="p">[</span><span class="s2">&quot;seconds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">realtime_all</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">tracksize</span><span class="p">:</span>
+        <span class="n">realtime_all</span> <span class="o">=</span> <span class="n">realtime_all</span><span class="p">[:</span><span class="n">tracksize</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">realtime_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">realtime_all</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">tracksize</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">realtime_all</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)]</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">realtime_all</span></div>
+
+
+
+<div class="viewcode-block" id="gen_dff_raw">
+<a class="viewcode-back" href="../../src.html#src.equal.gen_dff_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_dff_raw</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">realtime_all</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Conver data_dict to dataframe.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_raw_for_n_sessions`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_dict (dict): dictionary of data in the h5 file</span>
+<span class="sd">        realtime_all (np.ndarray): array of timestamps in seconds</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        df (pd.DataFrame): dataframe of trajectory in one session</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load keypoint tracks</span>
+    <span class="n">tracks</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;tracks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># nose</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># left ear</span>
+    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># right ear</span>
+    <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># bum</span>
+
+    <span class="c1"># compute raw traj</span>
+    <span class="n">xn</span><span class="p">,</span> <span class="n">yn</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span>
+    <span class="n">xb</span><span class="p">,</span> <span class="n">yb</span> <span class="o">=</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y3</span>
+    <span class="n">xc</span><span class="p">,</span> <span class="n">yc</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span> <span class="o">+</span> <span class="n">x3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">y0</span> <span class="o">+</span> <span class="n">y3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># centroid</span>
+    <span class="n">xh</span><span class="p">,</span> <span class="n">yh</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">x3</span><span class="p">,</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">y3</span>  <span class="c1"># head direction</span>
+
+    <span class="c1"># linear interp to fill in missing frames (nan)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;xc&quot;</span><span class="p">:</span> <span class="n">xc</span><span class="p">,</span>
+            <span class="s2">&quot;yc&quot;</span><span class="p">:</span> <span class="n">yc</span><span class="p">,</span>
+            <span class="s2">&quot;xh&quot;</span><span class="p">:</span> <span class="n">xh</span><span class="p">,</span>
+            <span class="s2">&quot;yh&quot;</span><span class="p">:</span> <span class="n">yh</span><span class="p">,</span>
+            <span class="s2">&quot;xn&quot;</span><span class="p">:</span> <span class="n">xn</span><span class="p">,</span>
+            <span class="s2">&quot;yn&quot;</span><span class="p">:</span> <span class="n">yn</span><span class="p">,</span>
+            <span class="s2">&quot;xb&quot;</span><span class="p">:</span> <span class="n">xb</span><span class="p">,</span>
+            <span class="s2">&quot;yb&quot;</span><span class="p">:</span> <span class="n">yb</span><span class="p">,</span>
+            <span class="s2">&quot;xr&quot;</span><span class="p">:</span> <span class="n">x2</span><span class="p">,</span>
+            <span class="s2">&quot;yr&quot;</span><span class="p">:</span> <span class="n">y2</span><span class="p">,</span>
+            <span class="s2">&quot;xl&quot;</span><span class="p">:</span> <span class="n">x1</span><span class="p">,</span>
+            <span class="s2">&quot;yl&quot;</span><span class="p">:</span> <span class="n">y1</span><span class="p">,</span>
+            <span class="s2">&quot;realtime&quot;</span><span class="p">:</span> <span class="n">realtime_all</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="c1"># df = df.interpolate(&quot;linear&quot;, limit_direction=&quot;both&quot;)</span>
+    <span class="c1"># t_valid = max([np.where(~np.isnan(x))[0][0] for x in df.values.T])</span>
+    <span class="c1"># df = df[t_valid:]</span>
+    <span class="c1"># df.index = range(len(df))</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="interpolate_df_raw">
+<a class="viewcode-back" href="../../src.html#src.equal.interpolate_df_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolate_df_raw</span><span class="p">(</span><span class="n">df_raw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate missing values in raw dataframe.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_raw_for_n_sessions`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_raw (pd.DataFrame): raw dataframe with missing values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        df (pd.DataFrame): dataframe with interpolated values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">limit_direction</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+    <span class="n">t_valid</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">t_valid</span><span class="p">:]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="align_xy_with_perspective_transform">
+<a class="viewcode-back" href="../../src.html#src.equal.align_xy_with_perspective_transform">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">align_xy_with_perspective_transform</span><span class="p">(</span><span class="n">xy_list</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply perspective transform to xy coordinates.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_raw_for_one_session`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        xy_list (np.ndarray): array of xy coordinates</span>
+<span class="sd">        M (np.ndarray): perspective transform matrix</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xy_list_transform (np.ndarray): transformed xy coordinates</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xy_list_transform</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">perspectiveTransform</span><span class="p">(</span><span class="n">xy_list</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">M</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">xy_list_transform</span></div>
+
+
+
+<div class="viewcode-block" id="gen_df_raw_for_one_session">
+<a class="viewcode-back" href="../../src.html#src.equal.gen_df_raw_for_one_session">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_df_raw_for_one_session</span><span class="p">(</span><span class="n">mouse_id</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">xy_removed_list</span><span class="p">,</span> <span class="n">sigma_xy</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load h5, timestamp, and generate df_raw for one session</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_raw_for_n_sessions`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mouse_id (int): mouse identifier</span>
+<span class="sd">        session (int): session number</span>
+<span class="sd">        xy_removed_list (list): list of xy coordinates to be removed</span>
+<span class="sd">        sigma_xy (float): standard deviation for Gaussian smoothing</span>
+<span class="sd">        M (np.ndarray): perspective transform matrix</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dff (pd.DataFrame): dataframe of raw trajectory for one session</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load h5py file</span>
+    <span class="n">subdir</span> <span class="o">=</span> <span class="n">h5_dict</span><span class="p">[</span><span class="n">mouse_id</span><span class="p">][</span><span class="n">session</span><span class="p">]</span>
+    <span class="n">load_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">bigdata_dir</span> <span class="o">/</span> <span class="n">subdir</span><span class="p">)</span>
+    <span class="n">keys</span><span class="p">,</span> <span class="n">data_dict</span><span class="p">,</span> <span class="n">tracksize</span> <span class="o">=</span> <span class="n">read_h5py</span><span class="p">(</span><span class="n">load_dir</span><span class="p">)</span>
+
+    <span class="c1"># load realtime</span>
+    <span class="n">subdir</span> <span class="o">=</span> <span class="n">csv_timestamp_dict</span><span class="p">[</span><span class="n">mouse_id</span><span class="p">][</span><span class="n">session</span><span class="p">]</span>
+    <span class="n">load_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">bigdata_dir</span> <span class="o">/</span> <span class="n">subdir</span><span class="p">)</span>
+    <span class="n">realtime_all</span> <span class="o">=</span> <span class="n">get_realtime_all</span><span class="p">(</span><span class="n">load_dir</span><span class="p">,</span> <span class="n">tracksize</span><span class="p">)</span>
+
+    <span class="c1"># initialize df_raw</span>
+    <span class="n">dff</span> <span class="o">=</span> <span class="n">gen_dff_raw</span><span class="p">(</span><span class="n">data_dict</span><span class="p">,</span> <span class="n">realtime_all</span><span class="p">)</span>
+
+    <span class="c1"># filter out 4 corners</span>
+    <span class="n">xy_traj</span> <span class="o">=</span> <span class="n">dff</span><span class="p">[[</span><span class="s2">&quot;xb&quot;</span><span class="p">,</span> <span class="s2">&quot;yb&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xy_removed_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">d_removed_traj_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">((</span><span class="n">xy_traj</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xy_removed</span><span class="p">)[</span><span class="kc">None</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+            <span class="k">for</span> <span class="n">xy_removed</span> <span class="ow">in</span> <span class="n">xy_removed_list</span>
+        <span class="p">]</span>
+        <span class="n">is_kept_traj_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">d_removed_traj</span> <span class="o">&gt;</span> <span class="n">d_tile</span> <span class="k">for</span> <span class="n">d_removed_traj</span> <span class="ow">in</span> <span class="n">d_removed_traj_list</span>
+        <span class="p">]</span>
+        <span class="n">is_kept_traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">is_kept_traj_list</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">dff</span> <span class="o">=</span> <span class="n">dff</span><span class="p">[</span><span class="n">is_kept_traj</span><span class="p">]</span>
+
+    <span class="c1"># interpolate dff</span>
+    <span class="n">dff</span> <span class="o">=</span> <span class="n">interpolate_df_raw</span><span class="p">(</span><span class="n">dff</span><span class="p">)</span>
+
+    <span class="c1"># attr: gaussian smooth xb, yb</span>
+    <span class="n">xyb_all</span> <span class="o">=</span> <span class="n">dff</span><span class="p">[[</span><span class="s2">&quot;xb&quot;</span><span class="p">,</span> <span class="s2">&quot;yb&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">xb</span><span class="p">,</span> <span class="n">yb</span> <span class="o">=</span> <span class="n">xyb_all</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">xg</span><span class="p">,</span> <span class="n">yg</span> <span class="o">=</span> <span class="n">gaussian_filter1d</span><span class="p">(</span><span class="n">xb</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_xy</span><span class="p">),</span> <span class="n">gaussian_filter1d</span><span class="p">(</span>
+        <span class="n">yb</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma_xy</span>
+    <span class="p">)</span>
+    <span class="n">xyg_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">xg</span><span class="p">,</span> <span class="n">yg</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># align trajectory with perspective transform</span>
+    <span class="n">xyb_transform</span> <span class="o">=</span> <span class="n">align_xy_with_perspective_transform</span><span class="p">(</span><span class="n">xyb_all</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+    <span class="n">xyg_transform</span> <span class="o">=</span> <span class="n">align_xy_with_perspective_transform</span><span class="p">(</span><span class="n">xyg_all</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+
+    <span class="c1"># attr</span>
+    <span class="n">dff</span> <span class="o">=</span> <span class="n">dff</span><span class="p">[[</span><span class="s2">&quot;realtime&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">dff</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span>
+    <span class="n">dff</span><span class="p">[</span><span class="s2">&quot;xb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyb_transform</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">dff</span><span class="p">[</span><span class="s2">&quot;yb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyb_transform</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">dff</span><span class="p">[</span><span class="s2">&quot;xg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyg_transform</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">dff</span><span class="p">[</span><span class="s2">&quot;yg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyg_transform</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">dff</span></div>
+
+
+
+<div class="viewcode-block" id="gen_df_raw_for_n_sessions">
+<a class="viewcode-back" href="../../src.html#src.equal.gen_df_raw_for_n_sessions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_df_raw_for_n_sessions</span><span class="p">(</span><span class="n">mouse_id</span><span class="p">,</span> <span class="n">n_sessions</span><span class="p">,</span> <span class="n">xy_removed_list</span><span class="p">,</span> <span class="n">sigma_xy</span><span class="p">,</span> <span class="n">M_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run :py:func:`gen_df_raw_for_one_session` for n_sessions and concatenate the results.</span>
+
+<span class="sd">    .. admonition:: Auxiliary functions:</span>
+
+<span class="sd">        .. line-block::</span>
+<span class="sd">            ╙── :py:func:`gen_df_raw_for_n_sessions`</span>
+<span class="sd">                └─╼ :py:func:`gen_df_raw_for_one_session`</span>
+<span class="sd">                    ├─╼ :py:func:`read_h5py`</span>
+<span class="sd">                    ├─╼ :py:func:`get_realtime_all`</span>
+<span class="sd">                    ├─╼ :py:func:`gen_dff_raw`</span>
+<span class="sd">                    ├─╼ :py:func:`interpolate_df_raw`</span>
+<span class="sd">                    └─╼ :py:func:`align_xy_with_perspective_transform`</span>
+
+<span class="sd">    .. autosummary::</span>
+<span class="sd">        gen_df_raw_for_one_session</span>
+<span class="sd">        read_h5py</span>
+<span class="sd">        get_realtime_all</span>
+<span class="sd">        gen_dff_raw</span>
+<span class="sd">        interpolate_df_raw</span>
+<span class="sd">        align_xy_with_perspective_transform</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mouse_id (int): mouse identifier</span>
+<span class="sd">        n_sessions (int): number of sessions</span>
+<span class="sd">        xy_removed_list (list): list of xy coordinates to be removed</span>
+<span class="sd">        sigma_xy (float): standard deviation for Gaussian smoothing</span>
+<span class="sd">        M_dict (dict): dictionary of perspective transform matrices</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        df (pd.DataFrame): concatenated dataframe of raw trajectories for all sessions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dff_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sessions</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;generating dff_raw for session&quot;</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">M_dict</span><span class="p">[(</span><span class="n">mouse_id</span><span class="p">,</span> <span class="n">session</span><span class="p">)]</span>
+        <span class="n">dff</span> <span class="o">=</span> <span class="n">gen_df_raw_for_one_session</span><span class="p">(</span>
+            <span class="n">mouse_id</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">xy_removed_list</span><span class="p">,</span> <span class="n">sigma_xy</span><span class="p">,</span> <span class="n">M</span>
+        <span class="p">)</span>
+        <span class="n">dff_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dff</span><span class="p">)</span>
+    <span class="n">df_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dff_list</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df_raw</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_raw</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df_raw</span></div>
+
+
+
+<div class="viewcode-block" id="get_one_tile_id">
+<a class="viewcode-back" href="../../src.html#src.equal.get_one_tile_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_one_tile_id</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">xy_pixel_all</span><span class="p">,</span> <span class="n">tile_id_all</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign tile id to one coordinate based on nearest tile pixel.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        xy (np.ndarray): coordinates of a point</span>
+<span class="sd">        xy_pixel_all (np.ndarray): array of pixel coordinates</span>
+<span class="sd">        tile_id_all (np.ndarray): array of tile IDs corresponding to pixels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tile_id (int): ID of the tile closest to the given point</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idx_pixel</span> <span class="o">=</span> <span class="p">((</span><span class="n">xy_pixel_all</span> <span class="o">-</span> <span class="n">xy</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+    <span class="n">tile_id</span> <span class="o">=</span> <span class="n">tile_id_all</span><span class="p">[</span><span class="n">idx_pixel</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tile_id</span></div>
+
+
+
+<span class="c1">## EQUALIZE TRAJECTORY</span>
+<div class="viewcode-block" id="upsample_df_raw">
+<a class="viewcode-back" href="../../src.html#src.equal.upsample_df_raw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">upsample_df_raw</span><span class="p">(</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">upsampl_fac</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upsample raw dataframe by linear interpolation.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_equal`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_raw (pd.DataFrame): raw trajectory dataframe</span>
+<span class="sd">        upsampl_fac (int): upsampling factor</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        df_raw_upsampl (pd.DataFrame): upsampled raw trajectory dataframe</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">upsampl_fac</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+
+    <span class="c1"># prep</span>
+    <span class="n">df_raw_upsampl</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;t_raw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">df_raw_upsampl</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;1/1/2000&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df_raw</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;64s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># interpolate</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;64s&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;32s&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;16s&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="s2">&quot;8s&quot;</span><span class="p">}[</span><span class="n">upsampl_fac</span><span class="p">]</span>
+    <span class="n">df_raw_upsampl</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_raw_upsampl</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">asfreq</span><span class="p">()</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="p">)</span>  <span class="c1">###</span>
+    <span class="n">df_raw_upsampl</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_raw_upsampl</span><span class="p">))</span>
+
+    <span class="c1"># add vg</span>
+    <span class="n">xyg_traj</span> <span class="o">=</span> <span class="n">df_raw_upsampl</span><span class="p">[[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">vg_traj</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">xyg_traj</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">vg_traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">vg_traj</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;vg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vg_traj</span>
+    <span class="k">return</span> <span class="n">df_raw_upsampl</span></div>
+
+
+
+<div class="viewcode-block" id="get_geod_equal_downsampl">
+<a class="viewcode-back" href="../../src.html#src.equal.get_geod_equal_downsampl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_geod_equal_downsampl</span><span class="p">(</span><span class="n">df_raw_upsampl</span><span class="p">,</span> <span class="n">d_downsampl</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get geodesic equal downsampling attributes.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_equal`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_raw_upsampl (pd.DataFrame): upsampled raw trajectory dataframe</span>
+<span class="sd">        d_downsampl (float): target distance for downsampling</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        t_sum (int): total number of time points</span>
+<span class="sd">        geod_diff_all (np.ndarray): difference between cumulative geodesic distance and equalized geodesic distance</span>
+<span class="sd">        geod_cumsum_all (np.ndarray): cumulative geodesic distance</span>
+<span class="sd">        geod_equal_downsampl (np.ndarray): equalized geodesic distance for downsampling</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vg_traj</span> <span class="o">=</span> <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;vg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">geod_cumsum_all</span> <span class="o">=</span> <span class="n">vg_traj</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span> <span class="o">/</span> <span class="n">vg_traj</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">t_sum</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">geod_cumsum_all</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="n">geod_equal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">t_sum</span><span class="p">)</span>
+    <span class="n">geod_diff_all</span> <span class="o">=</span> <span class="n">geod_cumsum_all</span> <span class="o">-</span> <span class="n">geod_equal</span>
+    <span class="n">geod_equal_downsampl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">vg_traj</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">d_downsampl</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">t_sum</span><span class="p">,</span> <span class="n">geod_diff_all</span><span class="p">,</span> <span class="n">geod_cumsum_all</span><span class="p">,</span> <span class="n">geod_equal_downsampl</span></div>
+
+
+
+<div class="viewcode-block" id="find_one_t_downsampl">
+<a class="viewcode-back" href="../../src.html#src.equal.find_one_t_downsampl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_one_t_downsampl</span><span class="p">(</span><span class="n">prg</span><span class="p">,</span> <span class="n">t_sum</span><span class="p">,</span> <span class="n">geod_diff_all</span><span class="p">,</span> <span class="n">geod_cumsum_all</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find one downsampled time point closest to the target geodesic progression.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_equal`</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        Step 1: find closest time t_min to the linear progression geod_equal, or minimize geod_diff</span>
+<span class="sd">        Step 2: progress of the geodesic distance is from 0 to 1</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        prg (float): target geodesic progression</span>
+<span class="sd">        t_sum (int): total number of time points</span>
+<span class="sd">        geod_diff_all (np.ndarray): difference between cumulative geodesic distance and equalized geodesic distance</span>
+<span class="sd">        geod_cumsum_all (np.ndarray): cumulative geodesic distance</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        t_min (int): downsampled time point closest to the target geodesic progression</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># param</span>
+    <span class="c1"># search_range = np.abs(geod_diff_all).max()</span>
+
+    <span class="c1"># get target time (guessed t_min)</span>
+    <span class="n">geod_diff</span> <span class="o">=</span> <span class="n">geod_diff_all</span><span class="p">[</span><span class="nb">int</span><span class="p">((</span><span class="n">prg</span> <span class="o">-</span> <span class="mf">1e-16</span><span class="p">)</span> <span class="o">*</span> <span class="n">t_sum</span><span class="p">)]</span>
+    <span class="n">t_tar</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">prg</span> <span class="o">-</span> <span class="n">geod_diff</span><span class="p">)</span> <span class="o">*</span> <span class="n">t_sum</span><span class="p">)</span>
+
+    <span class="c1"># limit the search range between x% of the total time</span>
+    <span class="n">search_range</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">geod_diff</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span>
+    <span class="n">t_low</span><span class="p">,</span> <span class="n">t_up</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">t_tar</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">t_sum</span> <span class="o">*</span> <span class="n">search_range</span><span class="p">)),</span> <span class="nb">min</span><span class="p">(</span>
+        <span class="n">t_tar</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">t_sum</span> <span class="o">*</span> <span class="n">search_range</span><span class="p">),</span> <span class="n">t_sum</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">)</span>
+    <span class="n">y_filtered</span> <span class="o">=</span> <span class="n">geod_cumsum_all</span><span class="p">[</span><span class="n">t_low</span><span class="p">:</span><span class="n">t_up</span><span class="p">]</span>
+    <span class="n">t_min</span> <span class="o">=</span> <span class="n">t_low</span> <span class="o">+</span> <span class="p">((</span><span class="n">prg</span> <span class="o">-</span> <span class="n">y_filtered</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">t_min</span></div>
+
+
+
+<div class="viewcode-block" id="get_attr_df_raw_upsampl">
+<a class="viewcode-back" href="../../src.html#src.equal.get_attr_df_raw_upsampl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_attr_df_raw_upsampl</span><span class="p">(</span>
+    <span class="n">df_raw_upsampl</span><span class="p">,</span> <span class="n">geod_cumsum_all</span><span class="p">,</span> <span class="n">t_downsampl_all</span><span class="p">,</span> <span class="n">geod_equal_downsampl</span><span class="p">,</span> <span class="n">d_downsampl</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get attributes for upsampled raw dataframe that will be inherited by df_equal.</span>
+
+<span class="sd">    Used in: :py:func:`gen_df_equal`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_raw_upsampl (pd.DataFrame): upsampled raw trajectory dataframe</span>
+<span class="sd">        geod_cumsum_all (np.ndarray): cumulative geodesic distance</span>
+<span class="sd">        t_downsampl_all (list): list of downsampled time points</span>
+<span class="sd">        geod_equal_downsampl (np.ndarray): equalized geodesic distance for downsampling</span>
+<span class="sd">        d_downsampl (float): target distance for downsampling</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        is_equal_all (np.ndarray): array indicating equalized points</span>
+<span class="sd">        t_equal_all (np.ndarray): cumulative count of equalized points</span>
+<span class="sd">        xye_traj (np.ndarray): corrected trajectory with equal spacing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load</span>
+    <span class="n">xyg_traj</span> <span class="o">=</span> <span class="n">df_raw_upsampl</span><span class="p">[[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">vg_traj</span> <span class="o">=</span> <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;vg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># t_equal leaving a trace to connect timestamp of df_equal and df_raw</span>
+    <span class="n">is_equal_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_raw_upsampl</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t_downsampl_all</span><span class="p">:</span>
+        <span class="n">is_equal_all</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">t_equal_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">is_equal_all</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+
+    <span class="c1"># correct xy_downsampl with linear interp for equal spacing</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">geod_cumsum_all</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_downsampl_all</span><span class="p">)]</span> <span class="o">-</span> <span class="n">geod_equal_downsampl</span>
+    <span class="c1"># err in progress (0 to 1)</span>
+    <span class="n">err_step</span> <span class="o">=</span> <span class="n">err</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">vg_traj</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">d_downsampl</span><span class="p">)</span>  <span class="c1"># err * n_steps</span>
+    <span class="n">xyg_equal</span> <span class="o">=</span> <span class="n">df_raw_upsampl</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t_downsampl_all</span><span class="p">][[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">xyg_equal_correct</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">xyg_equal</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">xyg_equal</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">err_step</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.0</span>
+    <span class="p">)</span>
+
+    <span class="c1"># df</span>
+    <span class="n">xye_traj</span> <span class="o">=</span> <span class="n">xyg_traj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">xye_traj</span><span class="p">[</span><span class="n">t_downsampl_all</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">xyg_equal_correct</span>
+    <span class="k">return</span> <span class="n">is_equal_all</span><span class="p">,</span> <span class="n">t_equal_all</span><span class="p">,</span> <span class="n">xye_traj</span></div>
+
+
+
+<div class="viewcode-block" id="gen_df_equal">
+<a class="viewcode-back" href="../../src.html#src.equal.gen_df_equal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_df_equal</span><span class="p">(</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">d_downsampl</span><span class="p">,</span> <span class="n">upsampl_fac</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Take raw trajectory and equalized trajectory.</span>
+
+<span class="sd">    .. admonition:: Auxiliary functions:</span>
+
+<span class="sd">        .. line-block::</span>
+<span class="sd">            ╙── :py:func:`gen_df_equal`</span>
+<span class="sd">                ├─╼ :py:func:`upsample_df_raw`</span>
+<span class="sd">                ├─╼ :py:func:`get_geod_equal_downsampl`</span>
+<span class="sd">                ├─╼ :py:func:`get_attr_df_raw_upsampl`</span>
+<span class="sd">                └─╼ :py:func:`find_one_t_downsampl`</span>
+
+<span class="sd">    .. autosummary::</span>
+<span class="sd">        upsample_df_raw</span>
+<span class="sd">        get_geod_equal_downsampl</span>
+<span class="sd">        get_attr_df_raw_upsampl</span>
+<span class="sd">        find_one_t_downsampl</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        Step 1: upsampling</span>
+<span class="sd">        Step 2: removing intermediate points so that inter-point distances are roughly ``d_tile/4``</span>
+<span class="sd">        Step 3: correcting the remaining points with linear interpolation to ensure equal spacing</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_raw (pd.DataFrame): raw trajectory dataframe</span>
+<span class="sd">        d_downsampl (float): target distance for downsampling, e.g., ``d_tile/4``</span>
+<span class="sd">        upsampl_fac (int, optional): upsampling factor. Defaults to 2.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        df_equal (pd.DataFrame): equalized trajectory dataframe</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># upsample the raw data x2 (x8, 45s)</span>
+    <span class="n">df_raw_upsampl</span> <span class="o">=</span> <span class="n">upsample_df_raw</span><span class="p">(</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">upsampl_fac</span><span class="p">)</span>
+
+    <span class="c1"># downsample by removing intermediate points so that inter-point distances are roughly d_tile/4 (45s)</span>
+    <span class="n">t_sum</span><span class="p">,</span> <span class="n">geod_diff_all</span><span class="p">,</span> <span class="n">geod_cumsum_all</span><span class="p">,</span> <span class="n">geod_equal_downsampl</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">get_geod_equal_downsampl</span><span class="p">(</span><span class="n">df_raw_upsampl</span><span class="p">,</span> <span class="n">d_downsampl</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># mp (3m45s)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_mp</span><span class="p">(</span><span class="n">prg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">find_one_t_downsampl</span><span class="p">(</span><span class="n">prg</span><span class="p">,</span> <span class="n">t_sum</span><span class="p">,</span> <span class="n">geod_diff_all</span><span class="p">,</span> <span class="n">geod_cumsum_all</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">multiprocess</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">num_cpus</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+        <span class="n">t_downsampl_all</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">run_mp</span><span class="p">,</span> <span class="n">geod_equal_downsampl</span><span class="p">)</span>
+
+    <span class="c1"># get attributes to df_raw_upsampl that will be inherited by df_equal</span>
+    <span class="n">is_equal_all</span><span class="p">,</span> <span class="n">t_equal_all</span><span class="p">,</span> <span class="n">xye_traj</span> <span class="o">=</span> <span class="n">get_attr_df_raw_upsampl</span><span class="p">(</span>
+        <span class="n">df_raw_upsampl</span><span class="p">,</span>
+        <span class="n">geod_cumsum_all</span><span class="p">,</span>
+        <span class="n">t_downsampl_all</span><span class="p">,</span>
+        <span class="n">geod_equal_downsampl</span><span class="p">,</span>
+        <span class="n">d_downsampl</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># attr to df_raw_upsampl</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;is_equal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_equal_all</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;t_equal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_equal_all</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;geod_cumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">geod_cumsum_all</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;xe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xye_traj</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">df_raw_upsampl</span><span class="p">[</span><span class="s2">&quot;ye&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xye_traj</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># generate df_equal (1m)</span>
+    <span class="n">df_equal</span> <span class="o">=</span> <span class="n">df_raw_upsampl</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+        <span class="n">t_downsampl_all</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># remove unwanted upsampled points</span>
+    <span class="c1"># df_equal[&quot;tile&quot;] = df_equal[&quot;tile&quot;].astype(&quot;int&quot;)</span>
+    <span class="n">df_equal</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_equal</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+    <span class="n">df_equal</span><span class="p">[</span><span class="s2">&quot;t_raw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_equal</span><span class="p">[</span><span class="s2">&quot;t_raw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)</span>
+    <span class="n">df_equal</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">))</span>
+
+    <span class="c1"># remove zero velocity from upsampling</span>
+    <span class="n">vg_traj</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">df_equal</span><span class="p">[[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">is_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">))</span>
+    <span class="n">is_zero</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">vg_traj</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">df_equal</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">is_zero</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># final update index of df_equal</span>
+    <span class="n">df_equal</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df_equal</span></div>
+
+
+
+<span class="c1">## LABEL TRAJECTORY</span>
+<div class="viewcode-block" id="get_all_diameter">
+<a class="viewcode-back" href="../../src.html#src.equal.get_all_diameter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_diameter</span><span class="p">(</span>
+    <span class="n">t0_base_all</span><span class="p">,</span>
+    <span class="n">df_equal</span><span class="p">,</span>
+    <span class="n">l_th</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">fs_equal</span><span class="p">,</span>
+    <span class="n">d_th</span><span class="o">=</span><span class="n">d_tile</span><span class="p">,</span>
+    <span class="n">n_samples_per_path</span><span class="o">=</span><span class="mi">20</span> <span class="o">*</span> <span class="n">fs_equal</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get diameter of a short segment at each timepoint (``t_equal``).</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        Step 1: for each timepoint ``t``, sweep forwards a short segment e.g., ``l_th=2*4``, or 2 tile width by default.</span>
+<span class="sd">        Step 2: for each segment, find the maximum distance between any two points in the segment, i.e., diameter.</span>
+<span class="sd">        Step 3: if the diameter is smaller than ``d_th``, label ``is_small=True`` for that timepoint.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t0_base_all (np.ndarray): array of timepoints in ``t_equal``</span>
+<span class="sd">        df_equal (pd.DataFrame): equalized trajectory dataframe</span>
+<span class="sd">        l_th (int, optional): length threshold for segment. Defaults to 2*fs_equal.</span>
+<span class="sd">        d_th (float, optional): diameter threshold. Defaults to d_tile.</span>
+<span class="sd">        n_samples_per_path (int, optional): number of samples per path. Defaults to 20*fs_equal.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        d_max_all (np.ndarray): array of diameters for each timepoint</span>
+<span class="sd">        bool_small_trim_all (np.ndarray): boolean array indicating small-diameter segments</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># trim to fit df_equal</span>
+    <span class="n">t0_base_all_1</span> <span class="o">=</span> <span class="n">t0_base_all</span><span class="p">[:</span><span class="o">-</span><span class="n">l_th</span><span class="p">]</span>
+    <span class="n">t0_base_all_2</span> <span class="o">=</span> <span class="n">t0_base_all</span><span class="p">[</span><span class="o">-</span><span class="n">l_th</span><span class="p">:]</span>
+
+    <span class="c1"># get ttttt array</span>
+    <span class="n">progression</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_samples_per_path</span><span class="p">)</span>
+    <span class="n">ttttt_all</span> <span class="o">=</span> <span class="p">[(</span><span class="n">t0_base_all_1</span> <span class="o">+</span> <span class="n">l_th</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">progression</span><span class="p">]</span>
+
+    <span class="c1"># get xy_arr</span>
+    <span class="n">xy_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">df_equal</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;xe&quot;</span><span class="p">,</span> <span class="s2">&quot;ye&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_all</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># get diameter</span>
+    <span class="n">d_arr</span> <span class="o">=</span> <span class="p">((</span><span class="n">xy_arr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">xy_arr</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">d_max_all_1</span> <span class="o">=</span> <span class="n">d_arr</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">bool_small_all_1</span> <span class="o">=</span> <span class="n">d_max_all_1</span> <span class="o">&lt;</span> <span class="n">d_th</span>
+
+    <span class="c1"># compute t0_base_all_2 separately</span>
+    <span class="n">d_max_all_2</span><span class="p">,</span> <span class="n">bool_small_all_2</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t0</span> <span class="ow">in</span> <span class="n">t0_base_all_2</span><span class="p">:</span>
+        <span class="n">xy_</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t0</span><span class="p">:,</span> <span class="p">[</span><span class="s2">&quot;xe&quot;</span><span class="p">,</span> <span class="s2">&quot;ye&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">d_</span> <span class="o">=</span> <span class="p">((</span><span class="n">xy_</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">xy_</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="n">d_max</span> <span class="o">=</span> <span class="n">d_</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">d_max_all_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d_max</span><span class="p">)</span>
+        <span class="n">bool_small_all_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d_max</span> <span class="o">&lt;</span> <span class="n">d_th</span><span class="p">)</span>
+
+    <span class="c1"># concat</span>
+    <span class="n">d_max_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">d_max_all_1</span><span class="p">,</span> <span class="n">d_max_all_2</span><span class="p">])</span>
+    <span class="n">bool_small_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">bool_small_all_1</span><span class="p">,</span> <span class="n">bool_small_all_2</span><span class="p">])</span>
+
+    <span class="c1"># trim head and tail of each segment</span>
+    <span class="n">tt_small_all</span> <span class="o">=</span> <span class="n">get_ii_segm_from_bool_list</span><span class="p">(</span><span class="n">bool_small_all</span><span class="p">)</span>
+    <span class="n">tt_small_trim</span> <span class="o">=</span> <span class="n">tt_small_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">tt_small_trim</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fs_equal</span>
+    <span class="n">tt_small_trim</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">fs_equal</span>
+    <span class="n">tt_small_trim</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt_small_all</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">tt_small_trim</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt_small_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">bool_small_trim_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">bool_small_all</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">tt_small_trim</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">bool_small_trim_all</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">d_max_all</span><span class="p">,</span> <span class="n">bool_small_trim_all</span></div>
+
+
+
+<div class="viewcode-block" id="get_xy_wall">
+<a class="viewcode-back" href="../../src.html#src.equal.get_xy_wall">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_xy_wall</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="mi">1148</span><span class="p">,</span> <span class="n">y0</span><span class="o">=</span><span class="mi">1030</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">990</span><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function draws a circle near the wall boundary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x0 (float): x-coordinate of the center of the wall boundary circle.</span>
+<span class="sd">        y0 (float): y-coordinate of the center of the wall boundary circle.</span>
+<span class="sd">        r (float, optional): radius of the wall. Defaults to 990 for the standard maze (mouse 10 session 6)</span>
+<span class="sd">        n_points (int, optional): number of points to generate along the circle. Defaults to 200.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        xy_wall: np.ndarray of shape (200, 2) representing the x and y coordinates of the wall boundary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">n_points</span><span class="p">)</span>
+    <span class="n">x_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span> <span class="o">+</span> <span class="n">x0</span>
+    <span class="n">y_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span> <span class="o">+</span> <span class="n">y0</span>
+    <span class="n">xy_wall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">x_</span><span class="p">,</span> <span class="n">y_</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xy_wall</span></div>
+
+
+
+<div class="viewcode-block" id="label_raw_traj_from_equalized_traj">
+<a class="viewcode-back" href="../../src.html#src.equal.label_raw_traj_from_equalized_traj">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">label_raw_traj_from_equalized_traj</span><span class="p">(</span><span class="n">bool_label_all</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">df_equal</span><span class="p">,</span> <span class="n">df_raw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given an attribute in df_equal, map it to df_raw based on ``df_equal.t_raw``</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bool_label_all (np.ndarray): boolean array indicating labeled segments in df_equal</span>
+<span class="sd">        label (str): name of the new attribute to add to df_raw</span>
+<span class="sd">        df_equal (pd.DataFrame): equalized trajectory dataframe</span>
+<span class="sd">        df_raw (pd.DataFrame): raw trajectory dataframe</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        df_raw (pd.DataFrame): df_raw with a newly added attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get intervals in t_equal</span>
+    <span class="n">tt_label_all</span> <span class="o">=</span> <span class="n">get_ii_segm_from_bool_list</span><span class="p">(</span><span class="n">bool_label_all</span><span class="p">)</span>
+    <span class="n">tt_label_all</span><span class="p">[</span><span class="n">tt_label_all</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="p">)</span>  <span class="c1"># replace last index</span>
+
+    <span class="c1"># get corresponding intervals in t_raw</span>
+    <span class="n">tt_raw_label_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">df_equal</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]]</span><span class="o">.</span><span class="n">t_raw</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">tt_label_all</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># attr to df_raw</span>
+    <span class="n">bool_label_all_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_raw</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">tt_raw_label_all</span><span class="p">:</span>
+        <span class="n">bool_label_all_raw</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">df_raw</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">bool_label_all_raw</span>
+    <span class="k">return</span> <span class="n">df_raw</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_jumps_as_tile_123">
+<a class="viewcode-back" href="../../src.html#src.equal.get_all_jumps_as_tile_123">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_jumps_as_tile_123</span><span class="p">(</span><span class="n">df_equal</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get (tile_last, tile_current, tile_next) for each timepoint in df_equal.</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        Step 1: get tile_id sequence without consecutive duplicates</span>
+<span class="sd">        Step 2: for each tile_id, get (tile_last, tile_current, tile_next)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_equal (pd.DataFrame): equalized trajectory dataframe</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tile_123_all (list of tuples): each tuple contains (tile_last, tile_current, tile_next) for each timepoint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tile_traj</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">tile_id</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">tile_traj_r</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">tile_traj</span><span class="p">)]</span>
+    <span class="n">tile_last_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">tile_traj_r</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">tile_traj_r</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">tile_next_all</span> <span class="o">=</span> <span class="n">tile_traj_r</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="n">tile_traj_r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">tile_123_all</span> <span class="o">=</span> <span class="n">fl</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">*</span> <span class="p">[(</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">groupby</span><span class="p">(</span><span class="n">tile_traj</span><span class="p">),</span> <span class="n">tile_last_all</span><span class="p">,</span> <span class="n">tile_next_all</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tile_123_all</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, maz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

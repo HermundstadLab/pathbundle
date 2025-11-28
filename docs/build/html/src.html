@@ -1,0 +1,1000 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src &mdash; pathbundle 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pathbundle documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pathbundle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">src</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.align">src.align</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.align.gen_df_tile"><code class="docutils literal notranslate"><span class="pre">gen_df_tile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.align.gen_one_dff_hexagon"><code class="docutils literal notranslate"><span class="pre">gen_one_dff_hexagon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.align.get_hexagon_dir_list"><code class="docutils literal notranslate"><span class="pre">get_hexagon_dir_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.align.get_xy_anchors_for_one_day"><code class="docutils literal notranslate"><span class="pre">get_xy_anchors_for_one_day()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.bundle">src.bundle</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_all_base_t0_l"><code class="docutils literal notranslate"><span class="pre">get_all_base_t0_l()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_bundle_for_one_t0_base"><code class="docutils literal notranslate"><span class="pre">get_bundle_for_one_t0_base()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_for_one_intervals_ij"><code class="docutils literal notranslate"><span class="pre">get_corr_for_one_intervals_ij()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_matrices"><code class="docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_equal_intervals_for_all_sessions"><code class="docutils literal notranslate"><span class="pre">get_equal_intervals_for_all_sessions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_l_overlap_hist_for_one_bundle"><code class="docutils literal notranslate"><span class="pre">get_l_overlap_hist_for_one_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_one_fixed_pair"><code class="docutils literal notranslate"><span class="pre">get_one_fixed_pair()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.shuffle_one_row"><code class="docutils literal notranslate"><span class="pre">shuffle_one_row()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.equal">src.equal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.align_xy_with_perspective_transform"><code class="docutils literal notranslate"><span class="pre">align_xy_with_perspective_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.find_one_t_downsampl"><code class="docutils literal notranslate"><span class="pre">find_one_t_downsampl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.gen_df_equal"><code class="docutils literal notranslate"><span class="pre">gen_df_equal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions"><code class="docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.gen_df_raw_for_one_session"><code class="docutils literal notranslate"><span class="pre">gen_df_raw_for_one_session()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.gen_dff_raw"><code class="docutils literal notranslate"><span class="pre">gen_dff_raw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_all_diameter"><code class="docutils literal notranslate"><span class="pre">get_all_diameter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_all_jumps_as_tile_123"><code class="docutils literal notranslate"><span class="pre">get_all_jumps_as_tile_123()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_attr_df_raw_upsampl"><code class="docutils literal notranslate"><span class="pre">get_attr_df_raw_upsampl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_geod_equal_downsampl"><code class="docutils literal notranslate"><span class="pre">get_geod_equal_downsampl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_one_tile_id"><code class="docutils literal notranslate"><span class="pre">get_one_tile_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_realtime_all"><code class="docutils literal notranslate"><span class="pre">get_realtime_all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.get_xy_wall"><code class="docutils literal notranslate"><span class="pre">get_xy_wall()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.interpolate_df_raw"><code class="docutils literal notranslate"><span class="pre">interpolate_df_raw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.label_raw_traj_from_equalized_traj"><code class="docutils literal notranslate"><span class="pre">label_raw_traj_from_equalized_traj()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.read_h5py"><code class="docutils literal notranslate"><span class="pre">read_h5py()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.equal.upsample_df_raw"><code class="docutils literal notranslate"><span class="pre">upsample_df_raw()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.metadata">src.metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.utils">src.utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.base_coverage"><code class="docutils literal notranslate"><span class="pre">base_coverage()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.categorical_entropy"><code class="docutils literal notranslate"><span class="pre">categorical_entropy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.find_maxima_of_2d_array"><code class="docutils literal notranslate"><span class="pre">find_maxima_of_2d_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.find_repeated_sequences"><code class="docutils literal notranslate"><span class="pre">find_repeated_sequences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.fl"><code class="docutils literal notranslate"><span class="pre">fl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.get_all_function_names"><code class="docutils literal notranslate"><span class="pre">get_all_function_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.get_ii_segm_from_bool_list"><code class="docutils literal notranslate"><span class="pre">get_ii_segm_from_bool_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.get_one_level_inner_functions"><code class="docutils literal notranslate"><span class="pre">get_one_level_inner_functions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.is_module_function"><code class="docutils literal notranslate"><span class="pre">is_module_function()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.js_sim"><code class="docutils literal notranslate"><span class="pre">js_sim()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.mutual_coverage"><code class="docutils literal notranslate"><span class="pre">mutual_coverage()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.print_auxiliary_functions"><code class="docutils literal notranslate"><span class="pre">print_auxiliary_functions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.reduce_df_via_halving"><code class="docutils literal notranslate"><span class="pre">reduce_df_via_halving()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.utils.reduce_rows_via_halving"><code class="docutils literal notranslate"><span class="pre">reduce_rows_via_halving()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-src">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pathbundle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">src</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/src.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="src">
+<h1>src<a class="headerlink" href="#src" title="Link to this heading"></a></h1>
+<section id="module-src.align">
+<span id="src-align"></span><h2>src.align<a class="headerlink" href="#module-src.align" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.align.gen_df_tile">
+<span class="sig-prename descclassname"><span class="pre">src.align.</span></span><span class="sig-name descname"><span class="pre">gen_df_tile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dff_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_mean_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/align.html#gen_df_tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.align.gen_df_tile" title="Link to this definition"></a></dt>
+<dd><p>This function generates a single <code class="docutils literal notranslate"><span class="pre">df</span></code> that contains all tile data generated by <a class="reference internal" href="#src.align.gen_one_dff_hexagon" title="src.align.gen_one_dff_hexagon"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_one_dff_hexagon()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dff_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – list of pd.DataFrame, each df is a hexagon</p></li>
+<li><p><strong>xy_mean_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>) – list of <code class="docutils literal notranslate"><span class="pre">(x,y)</span></code> tuples, each tuple is the mean x,y of the hexagon</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – stores all pixels for each tile</p></li>
+<li><p><strong>df_mean</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – stores the centroids of each tile</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.align.gen_one_dff_hexagon">
+<span class="sig-prename descclassname"><span class="pre">src.align.</span></span><span class="sig-name descname"><span class="pre">gen_one_dff_hexagon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hexagon_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgb_sum_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">765</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/align.html#gen_one_dff_hexagon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.align.gen_one_dff_hexagon" title="Link to this definition"></a></dt>
+<dd><p>Generate a DataFrame of pixel coordinates for a hexagon image where pixel values are below a threshold.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">rgb_sum_th</span> <span class="pre">=</span> <span class="pre">255*3</span></code> for white background</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hexagon_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – path to the hexagon image file</p></li>
+<li><p><strong>rgb_sum_th</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – threshold for the sum of RGB values to consider a pixel part of the hexagon. Defaults to 255*3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dff</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – DataFrame containing pixel coordinates of one hexagon</p></li>
+<li><p><strong>(x_mean, y_mean)</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>) – mean x and y coordinates of the hexagon</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.align.get_hexagon_dir_list">
+<span class="sig-prename descclassname"><span class="pre">src.align.</span></span><span class="sig-name descname"><span class="pre">get_hexagon_dir_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/align.html#get_hexagon_dir_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.align.get_hexagon_dir_list" title="Link to this definition"></a></dt>
+<dd><p>Get the list of directory to hexagon images, sorted by file name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>load_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – directory to load hexagon images; e.g., <code class="docutils literal notranslate"><span class="pre">load_dir</span> <span class="pre">=</span> <span class="pre">'mouse10_sess6_annotated_tiles'</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>hexagon_dir_sort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – sorted list of hexagon image paths</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.align.get_xy_anchors_for_one_day">
+<span class="sig-prename descclassname"><span class="pre">src.align.</span></span><span class="sig-name descname"><span class="pre">get_xy_anchors_for_one_day</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anchors_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/align.html#get_xy_anchors_for_one_day"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.align.get_xy_anchors_for_one_day" title="Link to this definition"></a></dt>
+<dd><p>Load anchors from image file and return x,y coordinates of four anchors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>anchors_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – to load black and white image</p></li>
+<li><p><strong>perm</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <em>optional</em>) – a list of four integers to permute the
+order of anchors.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xy_sort</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – x,y coordinates of four anchors, shape (4,2)</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>Below rotates the anchors by 90 degrees:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">anchors_dir</span> <span class="o">=</span> <span class="s2">&quot;data/anchors_all_mice/cam_mouse6_sess2.jpg&quot;</span>
+<span class="n">perm</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-src.bundle">
+<span id="src-bundle"></span><h2>src.bundle<a class="headerlink" href="#module-src.bundle" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_all_base_t0_l">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_all_base_t0_l</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_bundle_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_all_base_t0_l"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_all_base_t0_l" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_bundle_for_one_t0_base">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_bundle_for_one_t0_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_base_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_kdtree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool_small_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_bundle_for_one_t0_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_bundle_for_one_t0_base" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_corr_for_one_intervals_ij">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_for_one_intervals_ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_for_one_intervals_ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_for_one_intervals_ij" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_corr_matrices">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_matrices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_equal_intervals_for_all_sessions">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_equal_intervals_for_all_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_equal_intervals_for_all_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_equal_intervals_for_all_sessions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_l_overlap_hist_for_one_bundle">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_l_overlap_hist_for_one_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_base_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_overlap_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_overlap_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_th</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_l_overlap_hist_for_one_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_l_overlap_hist_for_one_bundle" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_one_fixed_pair">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_one_fixed_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tl_overlap_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_one_fixed_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_one_fixed_pair" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.shuffle_one_row">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">shuffle_one_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool_used</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_fixed_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tl_overlap_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_equal_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#shuffle_one_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.shuffle_one_row" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-src.equal">
+<span id="src-equal"></span><h2>src.equal<a class="headerlink" href="#module-src.equal" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.align_xy_with_perspective_transform">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">align_xy_with_perspective_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xy_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#align_xy_with_perspective_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.align_xy_with_perspective_transform" title="Link to this definition"></a></dt>
+<dd><p>Apply perspective transform to xy coordinates.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_raw_for_one_session" title="src.equal.gen_df_raw_for_one_session"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_one_session()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xy_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of xy coordinates</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – perspective transform matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xy_list_transform</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – transformed xy coordinates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.find_one_t_downsampl">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">find_one_t_downsampl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_sum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geod_diff_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geod_cumsum_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#find_one_t_downsampl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.find_one_t_downsampl" title="Link to this definition"></a></dt>
+<dd><p>Find one downsampled time point closest to the target geodesic progression.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_equal" title="src.equal.gen_df_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_equal()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Step 1</strong> – find closest time t_min to the linear progression geod_equal, or minimize geod_diff</p></li>
+<li><p><strong>Step 2</strong> – progress of the geodesic distance is from 0 to 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>prg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – target geodesic progression</p></li>
+<li><p><strong>t_sum</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – total number of time points</p></li>
+<li><p><strong>geod_diff_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – difference between cumulative geodesic distance and equalized geodesic distance</p></li>
+<li><p><strong>geod_cumsum_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – cumulative geodesic distance</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t_min</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – downsampled time point closest to the target geodesic progression</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.gen_df_equal">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">gen_df_equal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_downsampl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upsampl_fac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#gen_df_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.gen_df_equal" title="Link to this definition"></a></dt>
+<dd><p>Take raw trajectory and equalized trajectory.</p>
+<div class="admonition-auxiliary-functions admonition">
+<p class="admonition-title">Auxiliary functions:</p>
+<div class="line-block">
+<div class="line">╙── <a class="reference internal" href="#src.equal.gen_df_equal" title="src.equal.gen_df_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_equal()</span></code></a></div>
+<div class="line-block">
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.upsample_df_raw" title="src.equal.upsample_df_raw"><code class="xref py py-func docutils literal notranslate"><span class="pre">upsample_df_raw()</span></code></a></div>
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.get_geod_equal_downsampl" title="src.equal.get_geod_equal_downsampl"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_geod_equal_downsampl()</span></code></a></div>
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.get_attr_df_raw_upsampl" title="src.equal.get_attr_df_raw_upsampl"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_attr_df_raw_upsampl()</span></code></a></div>
+<div class="line">└─╼ <a class="reference internal" href="#src.equal.find_one_t_downsampl" title="src.equal.find_one_t_downsampl"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_one_t_downsampl()</span></code></a></div>
+</div>
+</div>
+</div>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.equal.upsample_df_raw" title="src.equal.upsample_df_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upsample_df_raw</span></code></a>(df_raw, upsampl_fac)</p></td>
+<td><p>Upsample raw dataframe by linear interpolation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.equal.get_geod_equal_downsampl" title="src.equal.get_geod_equal_downsampl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geod_equal_downsampl</span></code></a>(df_raw_upsampl, ...)</p></td>
+<td><p>Get geodesic equal downsampling attributes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.equal.get_attr_df_raw_upsampl" title="src.equal.get_attr_df_raw_upsampl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_attr_df_raw_upsampl</span></code></a>(df_raw_upsampl, ...)</p></td>
+<td><p>Get attributes for upsampled raw dataframe that will be inherited by df_equal.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.equal.find_one_t_downsampl" title="src.equal.find_one_t_downsampl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_one_t_downsampl</span></code></a>(prg, t_sum, ...)</p></td>
+<td><p>Find one downsampled time point closest to the target geodesic progression.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Step 1</strong> – upsampling</p></li>
+<li><p><strong>Step 2</strong> – removing intermediate points so that inter-point distances are roughly <code class="docutils literal notranslate"><span class="pre">d_tile/4</span></code></p></li>
+<li><p><strong>Step 3</strong> – correcting the remaining points with linear interpolation to ensure equal spacing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>df_raw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – raw trajectory dataframe</p></li>
+<li><p><strong>d_downsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – target distance for downsampling, e.g., <code class="docutils literal notranslate"><span class="pre">d_tile/4</span></code></p></li>
+<li><p><strong>upsampl_fac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – upsampling factor. Defaults to 2.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – equalized trajectory dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.gen_df_raw_for_n_sessions">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">gen_df_raw_for_n_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mouse_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sessions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_removed_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#gen_df_raw_for_n_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.gen_df_raw_for_n_sessions" title="Link to this definition"></a></dt>
+<dd><p>Run <a class="reference internal" href="#src.equal.gen_df_raw_for_one_session" title="src.equal.gen_df_raw_for_one_session"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_one_session()</span></code></a> for n_sessions and concatenate the results.</p>
+<div class="admonition-auxiliary-functions admonition">
+<p class="admonition-title">Auxiliary functions:</p>
+<div class="line-block">
+<div class="line">╙── <a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions" title="src.equal.gen_df_raw_for_n_sessions"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></div>
+<div class="line-block">
+<div class="line">└─╼ <a class="reference internal" href="#src.equal.gen_df_raw_for_one_session" title="src.equal.gen_df_raw_for_one_session"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_one_session()</span></code></a></div>
+<div class="line-block">
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.read_h5py" title="src.equal.read_h5py"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_h5py()</span></code></a></div>
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.get_realtime_all" title="src.equal.get_realtime_all"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_realtime_all()</span></code></a></div>
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.gen_dff_raw" title="src.equal.gen_dff_raw"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_dff_raw()</span></code></a></div>
+<div class="line">├─╼ <a class="reference internal" href="#src.equal.interpolate_df_raw" title="src.equal.interpolate_df_raw"><code class="xref py py-func docutils literal notranslate"><span class="pre">interpolate_df_raw()</span></code></a></div>
+<div class="line">└─╼ <a class="reference internal" href="#src.equal.align_xy_with_perspective_transform" title="src.equal.align_xy_with_perspective_transform"><code class="xref py py-func docutils literal notranslate"><span class="pre">align_xy_with_perspective_transform()</span></code></a></div>
+</div>
+</div>
+</div>
+</div>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.equal.gen_df_raw_for_one_session" title="src.equal.gen_df_raw_for_one_session"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_df_raw_for_one_session</span></code></a>(mouse_id, ...)</p></td>
+<td><p>Load h5, timestamp, and generate df_raw for one session</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.equal.read_h5py" title="src.equal.read_h5py"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_h5py</span></code></a>(load_dir)</p></td>
+<td><p>Convert h5 file to python dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.equal.get_realtime_all" title="src.equal.get_realtime_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_realtime_all</span></code></a>(load_dir, tracksize)</p></td>
+<td><p>Load timestamp csv file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.equal.gen_dff_raw" title="src.equal.gen_dff_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gen_dff_raw</span></code></a>(data_dict, realtime_all)</p></td>
+<td><p>Conver data_dict to dataframe.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.equal.interpolate_df_raw" title="src.equal.interpolate_df_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_df_raw</span></code></a>(df_raw)</p></td>
+<td><p>Interpolate missing values in raw dataframe.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#src.equal.align_xy_with_perspective_transform" title="src.equal.align_xy_with_perspective_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">align_xy_with_perspective_transform</span></code></a>(xy_list, M)</p></td>
+<td><p>Apply perspective transform to xy coordinates.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mouse_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – mouse identifier</p></li>
+<li><p><strong>n_sessions</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of sessions</p></li>
+<li><p><strong>xy_removed_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – list of xy coordinates to be removed</p></li>
+<li><p><strong>sigma_xy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – standard deviation for Gaussian smoothing</p></li>
+<li><p><strong>M_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – dictionary of perspective transform matrices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – concatenated dataframe of raw trajectories for all sessions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.gen_df_raw_for_one_session">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">gen_df_raw_for_one_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mouse_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_removed_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#gen_df_raw_for_one_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.gen_df_raw_for_one_session" title="Link to this definition"></a></dt>
+<dd><p>Load h5, timestamp, and generate df_raw for one session</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions" title="src.equal.gen_df_raw_for_n_sessions"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mouse_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – mouse identifier</p></li>
+<li><p><strong>session</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – session number</p></li>
+<li><p><strong>xy_removed_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – list of xy coordinates to be removed</p></li>
+<li><p><strong>sigma_xy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – standard deviation for Gaussian smoothing</p></li>
+<li><p><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – perspective transform matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dff</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – dataframe of raw trajectory for one session</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.gen_dff_raw">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">gen_dff_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">realtime_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#gen_dff_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.gen_dff_raw" title="Link to this definition"></a></dt>
+<dd><p>Conver data_dict to dataframe.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions" title="src.equal.gen_df_raw_for_n_sessions"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – dictionary of data in the h5 file</p></li>
+<li><p><strong>realtime_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of timestamps in seconds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – dataframe of trajectory in one session</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_all_diameter">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_all_diameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">170</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_per_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">80</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_all_diameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_all_diameter" title="Link to this definition"></a></dt>
+<dd><p>Get diameter of a short segment at each timepoint (<code class="docutils literal notranslate"><span class="pre">t_equal</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Step 1</strong> – for each timepoint <code class="docutils literal notranslate"><span class="pre">t</span></code>, sweep forwards a short segment e.g., <code class="docutils literal notranslate"><span class="pre">l_th=2*4</span></code>, or 2 tile width by default.</p></li>
+<li><p><strong>Step 2</strong> – for each segment, find the maximum distance between any two points in the segment, i.e., diameter.</p></li>
+<li><p><strong>Step 3</strong> – if the diameter is smaller than <code class="docutils literal notranslate"><span class="pre">d_th</span></code>, label <code class="docutils literal notranslate"><span class="pre">is_small=True</span></code> for that timepoint.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>t0_base_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of timepoints in <code class="docutils literal notranslate"><span class="pre">t_equal</span></code></p></li>
+<li><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – equalized trajectory dataframe</p></li>
+<li><p><strong>l_th</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – length threshold for segment. Defaults to 2*fs_equal.</p></li>
+<li><p><strong>d_th</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – diameter threshold. Defaults to d_tile.</p></li>
+<li><p><strong>n_samples_per_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – number of samples per path. Defaults to 20*fs_equal.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d_max_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of diameters for each timepoint</p></li>
+<li><p><strong>bool_small_trim_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – boolean array indicating small-diameter segments</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_all_jumps_as_tile_123">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_all_jumps_as_tile_123</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_all_jumps_as_tile_123"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_all_jumps_as_tile_123" title="Link to this definition"></a></dt>
+<dd><p>Get (tile_last, tile_current, tile_next) for each timepoint in df_equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Step 1</strong> – get tile_id sequence without consecutive duplicates</p></li>
+<li><p><strong>Step 2</strong> – for each tile_id, get (tile_last, tile_current, tile_next)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – equalized trajectory dataframe</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tile_123_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">tuples</span></code>) – each tuple contains (tile_last, tile_current, tile_next) for each timepoint</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_attr_df_raw_upsampl">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_attr_df_raw_upsampl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw_upsampl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geod_cumsum_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_downsampl_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geod_equal_downsampl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_downsampl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_attr_df_raw_upsampl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_attr_df_raw_upsampl" title="Link to this definition"></a></dt>
+<dd><p>Get attributes for upsampled raw dataframe that will be inherited by df_equal.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_equal" title="src.equal.gen_df_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_equal()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_raw_upsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – upsampled raw trajectory dataframe</p></li>
+<li><p><strong>geod_cumsum_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – cumulative geodesic distance</p></li>
+<li><p><strong>t_downsampl_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – list of downsampled time points</p></li>
+<li><p><strong>geod_equal_downsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – equalized geodesic distance for downsampling</p></li>
+<li><p><strong>d_downsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – target distance for downsampling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>is_equal_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array indicating equalized points</p></li>
+<li><p><strong>t_equal_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – cumulative count of equalized points</p></li>
+<li><p><strong>xye_traj</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – corrected trajectory with equal spacing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_geod_equal_downsampl">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_geod_equal_downsampl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw_upsampl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_downsampl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_geod_equal_downsampl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_geod_equal_downsampl" title="Link to this definition"></a></dt>
+<dd><p>Get geodesic equal downsampling attributes.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_equal" title="src.equal.gen_df_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_equal()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_raw_upsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – upsampled raw trajectory dataframe</p></li>
+<li><p><strong>d_downsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – target distance for downsampling</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>t_sum</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – total number of time points</p></li>
+<li><p><strong>geod_diff_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – difference between cumulative geodesic distance and equalized geodesic distance</p></li>
+<li><p><strong>geod_cumsum_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – cumulative geodesic distance</p></li>
+<li><p><strong>geod_equal_downsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – equalized geodesic distance for downsampling</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_one_tile_id">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_one_tile_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_pixel_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_id_all</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_one_tile_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_one_tile_id" title="Link to this definition"></a></dt>
+<dd><p>Assign tile id to one coordinate based on nearest tile pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xy</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – coordinates of a point</p></li>
+<li><p><strong>xy_pixel_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of pixel coordinates</p></li>
+<li><p><strong>tile_id_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of tile IDs corresponding to pixels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tile_id</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – ID of the tile closest to the given point</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_realtime_all">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_realtime_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracksize</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_realtime_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_realtime_all" title="Link to this definition"></a></dt>
+<dd><p>Load timestamp csv file.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions" title="src.equal.gen_df_raw_for_n_sessions"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>load_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – path to timestamp csv file</p></li>
+<li><p><strong>tracksize</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of frames in the trajectory</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>realtime_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – array of timestamps in seconds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.get_xy_wall">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">get_xy_wall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1148</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1030</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">990</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#get_xy_wall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.get_xy_wall" title="Link to this definition"></a></dt>
+<dd><p>This function draws a circle near the wall boundary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – x-coordinate of the center of the wall boundary circle.</p></li>
+<li><p><strong>y0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – y-coordinate of the center of the wall boundary circle.</p></li>
+<li><p><strong>r</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – radius of the wall. Defaults to 990 for the standard maze (mouse 10 session 6)</p></li>
+<li><p><strong>n_points</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – number of points to generate along the circle. Defaults to 200.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>xy_wall</strong> – np.ndarray of shape (200, 2) representing the x and y coordinates of the wall boundary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.interpolate_df_raw">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">interpolate_df_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#interpolate_df_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.interpolate_df_raw" title="Link to this definition"></a></dt>
+<dd><p>Interpolate missing values in raw dataframe.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions" title="src.equal.gen_df_raw_for_n_sessions"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df_raw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – raw dataframe with missing values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – dataframe with interpolated values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.label_raw_traj_from_equalized_traj">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">label_raw_traj_from_equalized_traj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool_label_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#label_raw_traj_from_equalized_traj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.label_raw_traj_from_equalized_traj" title="Link to this definition"></a></dt>
+<dd><p>Given an attribute in df_equal, map it to df_raw based on <code class="docutils literal notranslate"><span class="pre">df_equal.t_raw</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bool_label_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – boolean array indicating labeled segments in df_equal</p></li>
+<li><p><strong>label</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – name of the new attribute to add to df_raw</p></li>
+<li><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – equalized trajectory dataframe</p></li>
+<li><p><strong>df_raw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – raw trajectory dataframe</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_raw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – df_raw with a newly added attribute</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.read_h5py">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">read_h5py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#read_h5py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.read_h5py" title="Link to this definition"></a></dt>
+<dd><p>Convert h5 file to python dictionary.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_raw_for_n_sessions" title="src.equal.gen_df_raw_for_n_sessions"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_raw_for_n_sessions()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>load_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – path to h5py file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>keys</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – list of keys in the h5py file</p></li>
+<li><p><strong>data_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – dictionary of data in the h5py file</p></li>
+<li><p><strong>tracksize</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of frames in the trajectory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.equal.upsample_df_raw">
+<span class="sig-prename descclassname"><span class="pre">src.equal.</span></span><span class="sig-name descname"><span class="pre">upsample_df_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upsampl_fac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/equal.html#upsample_df_raw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.equal.upsample_df_raw" title="Link to this definition"></a></dt>
+<dd><p>Upsample raw dataframe by linear interpolation.</p>
+<p>Used in: <a class="reference internal" href="#src.equal.gen_df_equal" title="src.equal.gen_df_equal"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_df_equal()</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_raw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – raw trajectory dataframe</p></li>
+<li><p><strong>upsampl_fac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – upsampling factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_raw_upsampl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – upsampled raw trajectory dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.metadata">
+<span id="src-metadata"></span><h2>src.metadata<a class="headerlink" href="#module-src.metadata" title="Link to this heading"></a></h2>
+</section>
+<section id="module-src.utils">
+<span id="src-utils"></span><h2>src.utils<a class="headerlink" href="#module-src.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.base_coverage">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">base_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#base_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.base_coverage" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>base coverages is defined as how much p_base covers p</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_base</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>p</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – _description_. Defaults to -1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.categorical_entropy">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">categorical_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_base_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#categorical_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.categorical_entropy" title="Link to this definition"></a></dt>
+<dd><p>use base 2 to compute how many bits given a discrete distribution</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – _description_. Defaults to -1.</p></li>
+<li><p><strong>is_base_2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – _description_. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.find_maxima_of_2d_array">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">find_maxima_of_2d_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxima_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_footprint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_value_thres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#find_maxima_of_2d_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.find_maxima_of_2d_array" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>mask=1 for all elements is allowed to be a maximum</p></li>
+<li><p>use the convention that flips x,y; i.e., axis_0:y, axis_1:x</p></li>
+<li><p>keep only z_maxima &gt; z_value_thres</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z_array</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>maxima_mask</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – _description_. Defaults to 1.0.</p></li>
+<li><p><strong>r_footprint</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – _description_. Defaults to 3.</p></li>
+<li><p><strong>z_value_thres</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – _description_. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.find_repeated_sequences">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">find_repeated_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#find_repeated_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.find_repeated_sequences" title="Link to this definition"></a></dt>
+<dd><p>Finds all repeated sequences of a specified size within a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A list of tuples, where each tuple contains a repeated sequence and a list of its starting indices.</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.fl">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">fl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#fl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.fl" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>l</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.get_all_function_names">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">get_all_function_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#get_all_function_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.get_all_function_names" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.get_ii_segm_from_bool_list">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">get_ii_segm_from_bool_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occ_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#get_ii_segm_from_bool_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.get_ii_segm_from_bool_list" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>occ_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.get_one_level_inner_functions">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">get_one_level_inner_functions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#get_one_level_inner_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.get_one_level_inner_functions" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>func_name_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>func_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.is_module_function">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">is_module_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#is_module_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.is_module_function" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>func</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.js_sim">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">js_sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#js_sim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.js_sim" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>JSS = 1-JSD which is bounded between 0 and 1 when using base 2</p></li>
+<li><p>JSS: Jensen-Shannon Similarity</p></li>
+<li><p>JSD: Jensen-Shannon Divergence</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>p2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – _description_. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.mutual_coverage">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">mutual_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#mutual_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.mutual_coverage" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>mutual coverages is defined as the product of
+1. how much p1 covers p2 and
+2. how much p2 covers p1</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>p2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – _description_. Defaults to -1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.print_auxiliary_functions">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">print_auxiliary_functions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_name_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#print_auxiliary_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.print_auxiliary_functions" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>func_name_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>func_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.reduce_df_via_halving">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">reduce_df_via_halving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cumsum_frac</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">if_ascending</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#reduce_df_via_halving"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.reduce_df_via_halving" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>the name halving here does not necessarily mean dividing by 2</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>attr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>cumsum_frac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>if_ascending</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.reduce_rows_via_halving">
+<span class="sig-prename descclassname"><span class="pre">src.utils.</span></span><span class="sig-name descname"><span class="pre">reduce_rows_via_halving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cumsum_frac</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">if_ascending</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#reduce_rows_via_halving"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.reduce_rows_via_halving" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>_extended_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>i_column</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>cumsum_frac</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>if_ascending</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="pathbundle documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, maz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

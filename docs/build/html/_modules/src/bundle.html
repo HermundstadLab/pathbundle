@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.bundle &mdash; pathbundle 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pathbundle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../src.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pathbundle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.bundle</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.bundle</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">src.utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="c1">## GET BUNDLE TRAJECTORY FROM DATA</span>
+<div class="viewcode-block" id="get_all_base_t0_l">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_all_base_t0_l">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_base_t0_l</span><span class="p">(</span><span class="n">df_equal</span><span class="p">,</span> <span class="n">l_bundle_max</span><span class="p">):</span>
+    <span class="n">t0_base_all</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">xy_all</span> <span class="o">=</span> <span class="n">df_equal</span><span class="p">[[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">xy_kdtree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">xy_all</span><span class="p">)</span>
+    <span class="n">bool_small_all</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">is_small</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">l_base_max_all</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">len</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">bool_small_all</span><span class="p">[</span><span class="n">x</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">l_bundle_max</span><span class="p">])][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t0_base_all</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">t0_base_all</span><span class="p">,</span> <span class="n">bool_small_all</span><span class="p">,</span> <span class="n">l_base_max_all</span><span class="p">,</span> <span class="n">xy_all</span><span class="p">,</span> <span class="n">xy_kdtree</span></div>
+
+
+
+<div class="viewcode-block" id="get_bundle_for_one_t0_base">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_bundle_for_one_t0_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bundle_for_one_t0_base</span><span class="p">(</span>
+    <span class="n">t0_base</span><span class="p">,</span> <span class="n">l_base_max</span><span class="p">,</span> <span class="n">xy_all</span><span class="p">,</span> <span class="n">xy_kdtree</span><span class="p">,</span> <span class="n">bool_small_all</span><span class="p">,</span> <span class="n">df_equal</span><span class="p">,</span> <span class="n">d_th</span><span class="p">,</span> <span class="n">l_th</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">):</span>
+    <span class="c1"># get filter based on whether base is small</span>
+    <span class="n">is_base_small</span> <span class="o">=</span> <span class="n">bool_small_all</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_base_small</span><span class="p">:</span>
+        <span class="n">bool_small_all</span> <span class="o">=</span> <span class="o">~</span><span class="n">bool_small_all</span>
+
+    <span class="c1"># load base path</span>
+    <span class="n">xys_base</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t0_base</span> <span class="p">:</span> <span class="n">t0_base</span> <span class="o">+</span> <span class="n">l_base_max</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">xy_base</span> <span class="o">=</span> <span class="n">xys_base</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># override</span>
+    <span class="n">l_base_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xys_base</span><span class="p">)</span>
+
+    <span class="c1"># find neighbors</span>
+    <span class="n">t0_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">xy_kdtree</span><span class="o">.</span><span class="n">query_ball_point</span><span class="p">(</span><span class="n">xy_base</span><span class="p">,</span> <span class="n">d_th</span><span class="p">))</span>
+    <span class="n">t0_overlap</span> <span class="o">=</span> <span class="n">t0_overlap</span><span class="p">[</span><span class="n">t0_overlap</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">)</span> <span class="o">-</span> <span class="n">l_base_max</span><span class="p">]</span>
+
+    <span class="c1"># filter self</span>
+    <span class="n">t0_overlap</span> <span class="o">=</span> <span class="n">t0_overlap</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t0_overlap</span> <span class="o">-</span> <span class="n">t0_base</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">l_base_max</span><span class="p">]</span>
+
+    <span class="c1"># filer either small or not</span>
+    <span class="n">bool_t0_overlap</span> <span class="o">=</span> <span class="n">bool_small_all</span><span class="p">[</span><span class="n">t0_overlap</span><span class="p">]</span>
+    <span class="n">t0_overlap</span> <span class="o">=</span> <span class="n">t0_overlap</span><span class="p">[</span><span class="n">bool_t0_overlap</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t0_overlap</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+    <span class="c1"># find path length</span>
+    <span class="n">xy_all_ext</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">xy_all</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">l_base_max</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+    <span class="n">xys_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">xy_all_ext</span><span class="p">[</span><span class="n">t0_overlap</span> <span class="o">+</span> <span class="n">T</span><span class="p">]</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">l_base_max</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)</span>  <span class="c1"># use ext to align array</span>
+    <span class="n">bool_xy_overlap</span> <span class="o">=</span> <span class="p">((</span><span class="n">xys_overlap</span> <span class="o">-</span> <span class="n">xys_base</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">&lt;</span> <span class="n">d_th</span>
+
+    <span class="c1"># fragment overlap by small or not</span>
+    <span class="n">bool_small_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">bool_small_all</span><span class="p">[</span><span class="n">x</span> <span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">l_base_max</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t0_overlap</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">bool_xy_small_overlap</span> <span class="o">=</span> <span class="n">bool_xy_overlap</span> <span class="o">&amp;</span> <span class="n">bool_small_overlap</span>
+
+    <span class="c1"># get length of continuous segment for both conditions</span>
+    <span class="n">l_overlap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="nb">len</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">z</span><span class="p">)][</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">bool_xy_small_overlap</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># filter by l_th</span>
+    <span class="n">bool_kept</span> <span class="o">=</span> <span class="n">l_overlap</span> <span class="o">&gt;=</span> <span class="n">l_th</span>
+    <span class="n">t0_overlap</span> <span class="o">=</span> <span class="n">t0_overlap</span><span class="p">[</span><span class="n">bool_kept</span><span class="p">]</span>
+    <span class="n">l_overlap</span> <span class="o">=</span> <span class="n">l_overlap</span><span class="p">[</span><span class="n">bool_kept</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">t0_overlap</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">l_overlap</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span></div>
+
+
+
+<span class="c1">## CONSTRAINED SHUFFLE CONTROL</span>
+<div class="viewcode-block" id="get_one_fixed_pair">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_one_fixed_pair">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_one_fixed_pair</span><span class="p">(</span><span class="n">t0_base</span><span class="p">,</span> <span class="n">tl_overlap_dict</span><span class="p">):</span>
+    <span class="c1"># load</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">t0_overlap</span><span class="p">,</span> <span class="n">l_overlap</span> <span class="o">=</span> <span class="n">tl_overlap_dict</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># if len(l_overlap)==0:</span>
+    <span class="c1">#     return None</span>
+    <span class="c1"># choose one max length</span>
+    <span class="n">l_max</span> <span class="o">=</span> <span class="n">l_overlap</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">t0_fixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">t0_overlap</span><span class="p">[</span><span class="n">l_overlap</span> <span class="o">==</span> <span class="n">l_max</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">t0_fixed</span></div>
+
+
+
+<div class="viewcode-block" id="shuffle_one_row">
+<a class="viewcode-back" href="../../src.html#src.bundle.shuffle_one_row">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shuffle_one_row</span><span class="p">(</span>
+    <span class="n">t0_base</span><span class="p">,</span> <span class="n">bool_used</span><span class="p">,</span> <span class="n">pair_fixed_dict</span><span class="p">,</span> <span class="n">tl_overlap_dict</span><span class="p">,</span> <span class="n">l_base</span><span class="p">,</span> <span class="n">t_equal_max</span>
+<span class="p">):</span>
+    <span class="c1"># load</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">t0_overlap</span><span class="p">,</span> <span class="n">l_overlap</span> <span class="o">=</span> <span class="n">tl_overlap_dict</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">t0_l_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">t0_overlap</span><span class="p">,</span> <span class="n">l_overlap</span><span class="p">)}</span>
+    <span class="n">t0_max</span> <span class="o">=</span> <span class="n">pair_fixed_dict</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
+    <span class="n">l_max</span> <span class="o">=</span> <span class="p">[</span><span class="n">t0_l_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t0_max</span><span class="p">]</span>
+
+    <span class="c1"># fix max length</span>
+    <span class="n">bool_fixed</span> <span class="o">=</span> <span class="n">bool_used</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">bool_fixed</span><span class="p">[</span><span class="n">t0_max</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># fix self</span>
+    <span class="n">t_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t0_base</span> <span class="o">-</span> <span class="n">l_base</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">t_equal_max</span> <span class="o">-</span> <span class="n">l_base</span><span class="p">)</span>
+    <span class="n">t_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">t0_base</span> <span class="o">+</span> <span class="n">l_base</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">t_equal_max</span> <span class="o">-</span> <span class="n">l_base</span><span class="p">)</span>
+    <span class="n">bool_fixed</span><span class="p">[</span><span class="n">t_lower</span> <span class="p">:</span> <span class="n">t_upper</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">t0_fixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bool_fixed</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">t0_unfixed_nz</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">t0_overlap</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">t0_fixed</span><span class="p">))</span>
+    <span class="n">l_unfixed</span> <span class="o">=</span> <span class="p">[</span><span class="n">t0_l_dict</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t0_unfixed_nz</span><span class="p">]</span>
+
+    <span class="c1"># shuffle unfixed</span>
+    <span class="n">t0_unfixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">bool_fixed</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">t0_unfixed</span><span class="p">)</span>
+
+    <span class="c1"># pack</span>
+    <span class="n">t0_overlap_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">t0_unfixed</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">l_unfixed</span><span class="p">)],</span> <span class="n">t0_max</span><span class="p">])</span>
+    <span class="n">l_overlap_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">l_unfixed</span> <span class="o">+</span> <span class="n">l_max</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">t0_overlap_1</span><span class="p">,</span> <span class="n">l_overlap_1</span></div>
+
+
+
+<span class="c1">## HOUR-TO-HOUR CORRELATION MATRIX</span>
+<div class="viewcode-block" id="get_equal_intervals_for_all_sessions">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_equal_intervals_for_all_sessions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_equal_intervals_for_all_sessions</span><span class="p">(</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">df_equal</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+    <span class="c1"># get t0, t1 of each session</span>
+    <span class="n">n_sessions</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+    <span class="n">tt_sessions_realtime</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">df_raw</span><span class="p">[</span><span class="n">df_raw</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">realtime</span><span class="o">.</span><span class="n">values</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sessions</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># get t0s for each equal intervals</span>
+    <span class="n">ttttt_sessions_realtime</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">duration</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">tt_sessions_realtime</span>
+    <span class="p">]</span>
+    <span class="n">ttttt_sessions_equal</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[(</span><span class="n">df_equal</span><span class="p">[</span><span class="n">df_equal</span><span class="o">.</span><span class="n">session</span> <span class="o">==</span> <span class="n">sess</span><span class="p">]</span><span class="o">.</span><span class="n">realtime</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">sess</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ttttt_sessions_realtime</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># trim off last and concatenate</span>
+    <span class="n">t_bins_equal</span> <span class="o">=</span> <span class="n">fl</span><span class="p">([</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_sessions_equal</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">)]</span>  <span class="c1"># v1</span>
+    <span class="n">t_bins_equal</span> <span class="o">=</span> <span class="n">fl</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_sessions_equal</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">t_bins_equal</span></div>
+
+
+
+<div class="viewcode-block" id="get_l_overlap_hist_for_one_bundle">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_l_overlap_hist_for_one_bundle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_l_overlap_hist_for_one_bundle</span><span class="p">(</span>
+    <span class="n">t0_base</span><span class="p">,</span> <span class="n">t0_base_all</span><span class="p">,</span> <span class="n">t0_overlap_all</span><span class="p">,</span> <span class="n">l_overlap_all</span><span class="p">,</span> <span class="n">t_bins</span><span class="p">,</span> <span class="n">l_th</span>
+<span class="p">):</span>
+    <span class="c1"># load base</span>
+    <span class="n">t0_overlap_list</span> <span class="o">=</span> <span class="n">t0_overlap_all</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
+    <span class="n">l_overlap_list</span> <span class="o">=</span> <span class="n">l_overlap_all</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
+
+    <span class="c1"># filter (this filtering slows things down by 3-fold)</span>
+    <span class="n">bool_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">t0_overlap_list</span><span class="p">,</span> <span class="n">t0_base_all</span><span class="p">)</span>
+    <span class="n">t0_overlap_r</span> <span class="o">=</span> <span class="n">t0_overlap_list</span><span class="p">[</span><span class="n">bool_r</span><span class="p">]</span>
+    <span class="n">l_overlap_r</span> <span class="o">=</span> <span class="n">l_overlap_list</span><span class="p">[</span><span class="n">bool_r</span><span class="p">]</span>
+
+    <span class="c1"># assign t0_overlap to bins</span>
+    <span class="c1"># bin_overlap_list = np.digitize(t0_overlap_list, t_bins[1:-1]) # v1</span>
+    <span class="n">bin_overlap_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">t0_overlap_r</span><span class="p">,</span> <span class="n">fl</span><span class="p">(</span><span class="n">t_bins</span><span class="p">))</span>
+
+    <span class="c1"># keep only odd bins (even bins is out of t_bins)</span>
+    <span class="n">bins_kept</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">(</span><span class="n">t_bins</span><span class="p">)))[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">l_overlap_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">l_overlap_r</span><span class="p">[</span><span class="n">bin_overlap_r</span> <span class="o">==</span> <span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bins_kept</span><span class="p">]</span>
+
+    <span class="c1"># get histogram for each bin</span>
+    <span class="n">l_overlap_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">l_th</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l_overlap_groups</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">l_overlap_hist</span></div>
+
+
+
+<span class="n">ternary_bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_corr_for_one_intervals_ij">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_corr_for_one_intervals_ij">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_corr_for_one_intervals_ij</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">p_tensor</span><span class="p">):</span>
+    <span class="n">p_i_sum</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">][[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">p_ii</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">p_i_sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">p_i_sum</span><span class="p">[</span><span class="n">p_i_sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">count_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">p_ii</span><span class="p">,</span> <span class="n">ternary_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">p_persist</span> <span class="o">=</span> <span class="n">count_dict</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_ii</span><span class="p">)</span>
+    <span class="n">p_emerge</span> <span class="o">=</span> <span class="n">count_dict</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_ii</span><span class="p">)</span>  <span class="c1"># vanishing if i&gt;j</span>
+    <span class="k">return</span> <span class="n">p_persist</span><span class="p">,</span> <span class="n">p_emerge</span></div>
+
+
+
+<div class="viewcode-block" id="get_corr_matrices">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_corr_matrices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_corr_matrices</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">):</span>
+    <span class="n">persist_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">)))</span>
+    <span class="n">emerge_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">)),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">persist_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">emerge_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_corr_for_one_intervals_ij</span><span class="p">(</span>
+            <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">p_tensor</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">persist_arr</span><span class="p">,</span> <span class="n">emerge_arr</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, maz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

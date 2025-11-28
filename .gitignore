@@ -1,0 +1,7 @@
+*.egg-info
+scripts/*.ipynb
+data
+results
+scripts_unsynced
+src_unsynced
+tmp

@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.utils &mdash; pathbundle 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pathbundle
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../src.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pathbundle</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1">## PACKAGES</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">warnings</span><span class="o">,</span><span class="w"> </span><span class="nn">pickle</span><span class="o">,</span><span class="w"> </span><span class="nn">multiprocess</span><span class="o">,</span><span class="w"> </span><span class="nn">ast</span><span class="o">,</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="n">islice</span><span class="p">,</span> <span class="n">groupby</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">skimage.measure</span><span class="w"> </span><span class="kn">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">maximum_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">argrelextrema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">KDTree</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_filter1d</span><span class="p">,</span> <span class="n">gaussian_filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">poisson</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaussian_kde</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">jensenshannon</span>
+
+<span class="c1"># import sparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">cKDTree</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+
+<span class="c1">## SETTING</span>
+<span class="n">num_cpus</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">multiprocess</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">legacy</span><span class="o">=</span><span class="s2">&quot;1.25&quot;</span><span class="p">)</span>
+
+
+<span class="c1">## GENERAL MEASURES, SCORES</span>
+<div class="viewcode-block" id="fl">
+<a class="viewcode-back" href="../../src.html#src.utils.fl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fl</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        l (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="js_sim">
+<a class="viewcode-back" href="../../src.html#src.utils.js_sim">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">js_sim</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    NOTE:</span>
+<span class="sd">        - JSS = 1-JSD which is bounded between 0 and 1 when using base 2</span>
+<span class="sd">        - JSS: Jensen-Shannon Similarity</span>
+<span class="sd">        - JSD: Jensen-Shannon Divergence</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p1 (_type_): _description_</span>
+<span class="sd">        p2 (_type_): _description_</span>
+<span class="sd">        axis (int, optional): _description_. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">jensenshannon</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mutual_coverage">
+<a class="viewcode-back" href="../../src.html#src.utils.mutual_coverage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mutual_coverage</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    NOTE:</span>
+<span class="sd">        mutual coverages is defined as the product of</span>
+<span class="sd">        1. how much p1 covers p2 and</span>
+<span class="sd">        2. how much p2 covers p1</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p1 (_type_): _description_</span>
+<span class="sd">        p2 (_type_): _description_</span>
+<span class="sd">        axis (int, optional): _description_. Defaults to -1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># assert (p1.sum(-1) &lt;= 1 + 1e-6).prod() == 1</span>
+    <span class="c1"># assert (p2.sum(-1) &lt;= 1 + 1e-6).prod() == 1</span>
+    <span class="c1">#</span>
+    <span class="n">cover_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">*</span> <span class="p">(</span><span class="n">p2</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">cover_2</span> <span class="o">=</span> <span class="p">((</span><span class="n">p1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">p2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">mc</span> <span class="o">=</span> <span class="n">cover_1</span> <span class="o">*</span> <span class="n">cover_2</span>
+    <span class="k">return</span> <span class="n">mc</span></div>
+
+
+
+<div class="viewcode-block" id="base_coverage">
+<a class="viewcode-back" href="../../src.html#src.utils.base_coverage">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">base_coverage</span><span class="p">(</span><span class="n">p_base</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    NOTE:</span>
+<span class="sd">        base coverages is defined as how much p_base covers p</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p_base (_type_): _description_</span>
+<span class="sd">        p (_type_): _description_</span>
+<span class="sd">        axis (int, optional): _description_. Defaults to -1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">p_base</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="c1">#</span>
+    <span class="n">cover</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">p_base</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cover</span></div>
+
+
+
+<div class="viewcode-block" id="categorical_entropy">
+<a class="viewcode-back" href="../../src.html#src.utils.categorical_entropy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">categorical_entropy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">is_base_2</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;use base 2 to compute how many bits given a discrete distribution</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p (_type_): _description_</span>
+<span class="sd">        axis (int, optional): _description_. Defaults to -1.</span>
+<span class="sd">        is_base_2 (bool, optional): _description_. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">+=</span> <span class="mf">1e-16</span>
+    <span class="k">if</span> <span class="n">is_base_2</span><span class="p">:</span>
+        <span class="n">en</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">en</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">en</span></div>
+
+
+
+<span class="c1">## UTILITY ALGORITHMS</span>
+<div class="viewcode-block" id="reduce_df_via_halving">
+<a class="viewcode-back" href="../../src.html#src.utils.reduce_df_via_halving">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reduce_df_via_halving</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">cumsum_frac</span><span class="p">,</span> <span class="n">if_ascending</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    NOTE:</span>
+<span class="sd">        the name halving here does not necessarily mean dividing by 2</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (_type_): _description_</span>
+<span class="sd">        attr (_type_): _description_</span>
+<span class="sd">        cumsum_frac (_type_): _description_</span>
+<span class="sd">        if_ascending (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_sort</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="n">if_ascending</span><span class="p">)</span>
+    <span class="n">attr_sort</span> <span class="o">=</span> <span class="n">df_sort</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">attr_cumsum</span> <span class="o">=</span> <span class="n">attr_sort</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span> <span class="o">/</span> <span class="n">attr_sort</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">n_kept</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">attr_cumsum</span> <span class="o">&gt;</span> <span class="n">cumsum_frac</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dff</span> <span class="o">=</span> <span class="n">df_sort</span><span class="p">[:</span><span class="n">n_kept</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">dff</span></div>
+
+
+
+<div class="viewcode-block" id="reduce_rows_via_halving">
+<a class="viewcode-back" href="../../src.html#src.utils.reduce_rows_via_halving">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reduce_rows_via_halving</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">i_column</span><span class="p">,</span> <span class="n">cumsum_frac</span><span class="p">,</span> <span class="n">if_ascending</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rows (_type_): _description_</span>
+<span class="sd">        i_column (_type_): _description_</span>
+<span class="sd">        cumsum_frac (_type_): _description_</span>
+<span class="sd">        if_ascending (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load</span>
+    <span class="n">row_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+    <span class="n">column</span> <span class="o">=</span> <span class="n">row_arr</span><span class="p">[:,</span> <span class="n">i_column</span><span class="p">]</span>
+
+    <span class="c1"># sort</span>
+    <span class="k">if</span> <span class="n">if_ascending</span><span class="p">:</span>
+        <span class="n">idx_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">idx_sort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">column</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">row_arr_sort</span> <span class="o">=</span> <span class="n">row_arr</span><span class="p">[</span><span class="n">idx_sort</span><span class="p">]</span>
+    <span class="n">column_sort</span> <span class="o">=</span> <span class="n">column</span><span class="p">[</span><span class="n">idx_sort</span><span class="p">]</span>
+
+    <span class="c1"># filter</span>
+    <span class="n">idx_removed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">column_sort</span><span class="p">)</span> <span class="o">/</span> <span class="n">column_sort</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">cumsum_frac</span>
+    <span class="n">idx_kept</span> <span class="o">=</span> <span class="o">~</span><span class="n">idx_removed</span>
+    <span class="n">row_arr_kept</span> <span class="o">=</span> <span class="n">row_arr_sort</span><span class="p">[</span><span class="n">idx_kept</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">row_arr_kept</span></div>
+
+
+
+<div class="viewcode-block" id="find_maxima_of_2d_array">
+<a class="viewcode-back" href="../../src.html#src.utils.find_maxima_of_2d_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_maxima_of_2d_array</span><span class="p">(</span><span class="n">z_array</span><span class="p">,</span> <span class="n">maxima_mask</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">r_footprint</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">z_value_thres</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    NOTE:</span>
+<span class="sd">        - mask=1 for all elements is allowed to be a maximum</span>
+<span class="sd">        - use the convention that flips x,y; i.e., axis_0:y, axis_1:x</span>
+<span class="sd">        - keep only z_maxima &gt; z_value_thres</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        z_array (_type_): _description_</span>
+<span class="sd">        maxima_mask (float, optional): _description_. Defaults to 1.0.</span>
+<span class="sd">        r_footprint (int, optional): _description_. Defaults to 3.</span>
+<span class="sd">        z_value_thres (int, optional): _description_. Defaults to 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z_masked</span> <span class="o">=</span> <span class="n">z_array</span> <span class="o">*</span> <span class="n">maxima_mask</span>
+    <span class="n">z_conv</span> <span class="o">=</span> <span class="n">maximum_filter</span><span class="p">(</span><span class="n">z_masked</span><span class="p">,</span> <span class="n">footprint</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="n">r_footprint</span><span class="p">,</span> <span class="n">r_footprint</span><span class="p">]))</span>
+    <span class="n">detected_peaks</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_conv</span> <span class="o">==</span> <span class="n">z_masked</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">z_masked</span> <span class="o">&gt;</span> <span class="n">z_value_thres</span><span class="p">)</span>
+    <span class="n">y_maxima</span><span class="p">,</span> <span class="n">x_maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">detected_peaks</span><span class="p">)</span>
+    <span class="n">z_maxima</span> <span class="o">=</span> <span class="n">z_array</span><span class="p">[</span><span class="n">y_maxima</span><span class="p">,</span> <span class="n">x_maxima</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">x_maxima</span><span class="p">,</span> <span class="n">y_maxima</span><span class="p">,</span> <span class="n">z_maxima</span></div>
+
+
+
+<div class="viewcode-block" id="find_repeated_sequences">
+<a class="viewcode-back" href="../../src.html#src.utils.find_repeated_sequences">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_repeated_sequences</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds all repeated sequences of a specified size within a list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (_type_): _description_</span>
+<span class="sd">        size (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of tuples, where each tuple contains a repeated sequence and a list of its starting indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="n">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">sequences</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">sequence</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">size</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="n">sequences</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sequences</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">repeated_sequences</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span> <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">sequences</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">repeated_sequences</span></div>
+
+
+
+<div class="viewcode-block" id="get_ii_segm_from_bool_list">
+<a class="viewcode-back" href="../../src.html#src.utils.get_ii_segm_from_bool_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ii_segm_from_bool_list</span><span class="p">(</span><span class="n">occ_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        occ_list (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bool_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">occ_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">bool_list</span><span class="p">)])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">tts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])))</span>
+    <span class="c1"># bool_tt = [x == 1 for x, y in groupby(bool_list)]</span>
+    <span class="n">bool_tt</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">bool_list</span><span class="p">)]</span>
+    <span class="n">tts_r</span> <span class="o">=</span> <span class="n">tts</span><span class="p">[</span><span class="n">bool_tt</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tts_r</span></div>
+
+
+
+<span class="c1">## GET FUNCTION DEPENDENCY TREE</span>
+<div class="viewcode-block" id="is_module_function">
+<a class="viewcode-back" href="../../src.html#src.utils.is_module_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_module_function</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        module (_type_): _description_</span>
+<span class="sd">        func (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="ow">and</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">==</span> <span class="n">module</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_function_names">
+<a class="viewcode-back" href="../../src.html#src.utils.get_all_function_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_function_names</span><span class="p">(</span><span class="n">func_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func_dir (_type_): _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load source code directory</span>
+    <span class="n">exec</span><span class="p">(</span><span class="s2">&quot;import &quot;</span> <span class="o">+</span> <span class="n">func_dir</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+
+    <span class="n">func_name_all</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">name</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">func_dir</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">is_module_function</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">func_dir</span><span class="p">),</span> <span class="n">obj</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">func_name_all</span></div>
+
+
+
+<div class="viewcode-block" id="get_one_level_inner_functions">
+<a class="viewcode-back" href="../../src.html#src.utils.get_one_level_inner_functions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_one_level_inner_functions</span><span class="p">(</span><span class="n">func_name</span><span class="p">,</span> <span class="n">func_name_all</span><span class="p">,</span> <span class="n">func_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func_name (_type_): _description_</span>
+<span class="sd">        func_name_all (_type_): _description_</span>
+<span class="sd">        func_dir (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">func_dir</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">func_name</span><span class="p">)</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+
+    <span class="n">inner_func_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="ow">in</span> <span class="n">func_name_all</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">y</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inner_func_list</span><span class="p">):</span>
+            <span class="n">inner_func_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inner_func_list</span></div>
+
+
+
+<div class="viewcode-block" id="print_auxiliary_functions">
+<a class="viewcode-back" href="../../src.html#src.utils.print_auxiliary_functions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_auxiliary_functions</span><span class="p">(</span><span class="n">func_name</span><span class="p">,</span> <span class="n">func_name_all</span><span class="p">,</span> <span class="n">func_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    _extended_summary_</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        func_name (_type_): _description_</span>
+<span class="sd">        func_name_all (_type_): _description_</span>
+<span class="sd">        func_dir (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># iter to get edges and nodes</span>
+    <span class="n">nodes_list</span> <span class="o">=</span> <span class="p">[[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)]]</span>
+    <span class="n">edge_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">node_id</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">parent_node_id</span><span class="p">,</span> <span class="n">func_name</span> <span class="ow">in</span> <span class="n">nodes_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">inner_nodes</span> <span class="o">=</span> <span class="n">get_one_level_inner_functions</span><span class="p">(</span>
+                <span class="n">func_name</span><span class="p">,</span> <span class="n">func_name_all</span><span class="p">,</span> <span class="n">func_dir</span>
+            <span class="p">)</span>
+            <span class="n">nodes_</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inner_nodes</span><span class="p">:</span>
+                <span class="n">node_id</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">nodes_</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node_id</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+                <span class="n">edge_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">parent_node_id</span><span class="p">,</span> <span class="n">node_id</span><span class="p">))</span>
+            <span class="n">nodes_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nodes_</span><span class="p">)</span>
+
+    <span class="c1"># get graph</span>
+    <span class="n">nodes_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">(</span><span class="n">nodes_list</span><span class="p">)}</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edge_list</span><span class="p">)</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">nodes_dict</span><span class="p">)</span>
+
+    <span class="c1"># print</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;.. admonition:: Auxiliary functions:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    .. line-block::&quot;</span><span class="p">)</span>
+    <span class="c1"># nx.write_network_text(G, with_labels=True)</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">generate_network_text</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">with_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    &quot;</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">.. autosummary::&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">G</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, maz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
