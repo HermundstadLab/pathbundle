@@ -268,47 +268,92 @@ def gen_one_column_of_p_array_from_bundle(
 
 
 def gen_p_tensor(p_arr, t0_base_groups):
-    """Reshape p_array into p_tensor.
+    """Reshape p_array into ``p_tensor`` and ``p_pillars``.
 
     Algorithm:
         step 1: Compute ``group_bins`` based on ``t0_base_groups``
-        step 2: split ``p_arr`` into pillar groups according to ``group_bins``
-        step 3: transpose each pillar group to form the probability tensor ``p_tensor`` with index ``(hour bin i, hour bin j, base time k)``
+        step 2: split ``p_arr`` into slab groups according to ``group_bins``
+        step 3: transpose probability slabs into probability pillars ``p_pillars`` each with shape ``(n_bins, n_base_in_bin)``
+        step 4: recast ``p_pillars`` into ``p_tensor`` format, where p_tensor[i, j] loads probabilities of all base paths in bin i that are overlapping with bin j, i.e., ``p(overlap with j | a base in i)``
 
     Args:
-        p_arr (np.ndarray): probability array for ``(hour bin i, base time k)``
+        p_arr (np.ndarray): probability array for ``(base time k, hour bin i)``
         t0_base_groups (list of np.ndarray): base timepoints grouped by hour bins
 
     Returns:
         p_tensor (list of np.ndarray): probability tensor with index ``(hour bin i, hour bin j, base time k)``
+        p_pillars (list of np.ndarray): list of ``n_bins`` probability pillars each with shape ``(n_bins, n_base_in_bin)``
 
     Example:
-        For loading bin 0, bin 1, base 42::
+        For loading all base timepoints in bin i that overlap with bin j::
 
-            p_0_1_42 = p_tensor[0][1,42]
+            p_list = p_tensor[i,j]
+            n_base_in_bin = len(p_list)
+
+        Note that ``p_tensor`` and ``p_pillars`` are related by::
+
+            np.stack(p_tensor[i,j]) == p_pillars[i][j]
     """
     group_bins = np.cumsum([0] + [len(x) for x in t0_base_groups])
-    p_tensor = [p_arr[x:y].T for x, y in zip(group_bins[:-1], group_bins[1:])]
-    return p_tensor
+    n_bins = len(t0_base_groups)
+    p_pillars = [p_arr[x:y].T for x, y in zip(group_bins[:-1], group_bins[1:])]
+    p_tensor = np.zeros((n_bins, n_bins), dtype=object)
+    for i, j in product(range(n_bins), repeat=2):
+        p_tensor[i, j] = p_pillars[i][j]
+    return p_tensor, p_pillars
 
 
-def get_corr_of_one_interval_pair_ij(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3, 1]):
-    """_summary_
+# def get_one_cij_for_corr_matrices(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3, 1]):
+#     """_summary_
+
+#     Used in :py:func:`get_corr_matrices`.
+
+#     Args:
+#         i (int): index of the first interval
+#         j (int): index of the second interval
+#         p_tensor (list of np.ndarray): probability tensor
+#         ternary_bins (list, optional): _description_. Defaults to [0, 1 / 3, 2 / 3, 1].
+
+#     Returns:
+#         p_persist (float): probability of finding a persist path from interval i to j
+#         p_emerge (float): probability of finding an emerging path from interval i to j
+#     """
+#     p_i_sum = p_tensor[i][[i, j]].sum(0)
+#     p_ii = p_tensor[i][i][p_i_sum > 0] / p_i_sum[p_i_sum > 0]
+#     count_dict = Counter(np.digitize(p_ii, ternary_bins[1:-1]))
+#     p_persist = count_dict[1] / len(p_ii)
+#     p_emerge = count_dict[2] / len(p_ii)  # vanishing if i>j
+#     return p_persist, p_emerge
+
+
+def get_one_cij_for_corr_matrices(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3, 1]):
+    """Compute one entry ``c_ij`` of correlation matrices from probability tensor.
 
     Used in :py:func:`get_corr_matrices`.
 
+    Algorithm:
+        step 1: For an hour bin i, isolate all overlapping paths with hour bins i and j with nonzero probability, i.e, ``p_k(i|i) = p(overlap with bin i | base k in bin i)`` and ``p_k(j|i) = p(overlap with bin j | base k in bin i)``.
+        step 2: Renormalize the probabilities so that ``p_k(i|i) + p_k(j|i) = 1``.
+        step 3: For each base path k, classify the renormalized probabilities into persistent or emerging paths based on ``ternary_bins``; i.e., persistent paths have ``p_k(j|i)`` in ``[1/3, 2/3)``, and emerging paths have ``p_k(j|i)`` in ``[2/3, 1]`` for ``j>i``.
+        step 4: Compute the fraction of persistent (``p_persist``) and emerging paths (``p_emerge``) by summing over all base paths k.
+
     Args:
-        i (int): index of the first interval
-        j (int): index of the second interval
-        p_tensor (list of np.ndarray): probability tensor
-        ternary_bins (list, optional): _description_. Defaults to [0, 1 / 3, 2 / 3, 1].
+        i (int): index of the base hour bin
+        j (int): index of the target hour bin
+        p_tensor (list of np.ndarray): probability tensor (see :py:func:`gen_p_tensor` for details)
+        ternary_bins (list, optional): For classify whether a base path is persistent or emerging. Defaults to [0, 1/3, 2/3, 1].
 
     Returns:
         p_persist (float): probability of finding a persist path from interval i to j
         p_emerge (float): probability of finding an emerging path from interval i to j
+
+    NOTE:
+        ``p_emerge`` is ``p_vanish`` if ``i>j``
     """
-    p_i_sum = p_tensor[i][[i, j]].sum(0)
-    p_ii = p_tensor[i][i][p_i_sum > 0] / p_i_sum[p_i_sum > 0]
+    p_i_sum = np.stack(p_tensor[i, [i, j]]).sum(0)
+    p_ii = (
+        p_tensor[i, i][p_i_sum > 0] / p_i_sum[p_i_sum > 0]
+    )  # renormalize to bin i and j only
     count_dict = Counter(np.digitize(p_ii, ternary_bins[1:-1]))
     p_persist = count_dict[1] / len(p_ii)
     p_emerge = count_dict[2] / len(p_ii)  # vanishing if i>j
@@ -316,27 +361,28 @@ def get_corr_of_one_interval_pair_ij(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 /
 
 
 def get_corr_matrices(p_tensor):
-    """_summary_
+    """Compute entire correlation matrices from probability tensor.
 
     .. admonition:: Auxiliary functions:
 
         .. line-block::
             ╙── :py:func:`get_corr_matrices`
-                └─╼ :py:func:`get_corr_of_one_interval_pair_ij`
+                └─╼ :py:func:`get_one_cij_for_corr_matrices`
 
     .. autosummary::
-        get_corr_of_one_interval_pair_ij
+        get_one_cij_for_corr_matrices
 
     Args:
-        p_tensor (_type_): _description_
+        p_tensor (np.ndarray of np.ndarray): probability tensor (see :py:func:`gen_p_tensor` for details)
 
     Returns:
-        _type_: _description_
+        persist_arr (np.ndarray): matrix of persistent path probabilities
+        emerge_arr (np.ndarray): matrix of emerging path probabilities
     """
     persist_arr = np.zeros((len(p_tensor), len(p_tensor)))
     emerge_arr = np.zeros((len(p_tensor), len(p_tensor)))
     for i, j in product(range(len(p_tensor)), repeat=2):
-        persist_arr[i, j], emerge_arr[i, j] = get_corr_of_one_interval_pair_ij(
+        persist_arr[i, j], emerge_arr[i, j] = get_one_cij_for_corr_matrices(
             i, j, p_tensor
         )
     return persist_arr, emerge_arr

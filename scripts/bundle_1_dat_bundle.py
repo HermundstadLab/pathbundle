@@ -22,6 +22,10 @@
 # ## OUT_DATA
 # - `df_segm_root`
 # - `dat_segm_root`
+#
+# ## MAIN_FUNCTIONS
+# - `get_all_base_t0_l`
+# - `get_bundle_for_one_t0_base`
 
 # %% [markdown]
 # ## VERSION
@@ -41,7 +45,7 @@ from src.bundle import *
 # ## BASH PARAMETERS
 
 # %%
-mouse_id = 3#int(sys.argv[1])
+mouse_id = 3 #int(sys.argv[1])
 
 # %%
 tag = f"mouse_{mouse_id}"

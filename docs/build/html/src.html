@@ -57,8 +57,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_all_base_t0_l"><code class="docutils literal notranslate"><span class="pre">get_all_base_t0_l()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_bundle_for_one_t0_base"><code class="docutils literal notranslate"><span class="pre">get_bundle_for_one_t0_base()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_matrices"><code class="docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_of_one_interval_pair_ij"><code class="docutils literal notranslate"><span class="pre">get_corr_of_one_interval_pair_ij()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_equal_hourly_intervals_for_all_sessions"><code class="docutils literal notranslate"><span class="pre">get_equal_hourly_intervals_for_all_sessions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_one_cij_for_corr_matrices"><code class="docutils literal notranslate"><span class="pre">get_one_cij_for_corr_matrices()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_one_fixed_pair"><code class="docutils literal notranslate"><span class="pre">get_one_fixed_pair()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.shuffle_one_row"><code class="docutils literal notranslate"><span class="pre">shuffle_one_row()</span></code></a></li>
 </ul>
@@ -250,28 +250,37 @@ order of anchors.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.gen_p_tensor">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">gen_p_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_base_groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#gen_p_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.gen_p_tensor" title="Link to this definition"></a></dt>
-<dd><p>Reshape p_array into p_tensor.</p>
+<dd><p>Reshape p_array into <code class="docutils literal notranslate"><span class="pre">p_tensor</span></code> and <code class="docutils literal notranslate"><span class="pre">p_pillars</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Algorithm<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>step 1</strong> – Compute <code class="docutils literal notranslate"><span class="pre">group_bins</span></code> based on <code class="docutils literal notranslate"><span class="pre">t0_base_groups</span></code></p></li>
-<li><p><strong>step 2</strong> – split <code class="docutils literal notranslate"><span class="pre">p_arr</span></code> into pillar groups according to <code class="docutils literal notranslate"><span class="pre">group_bins</span></code></p></li>
-<li><p><strong>step 3</strong> – transpose each pillar group to form the probability tensor <code class="docutils literal notranslate"><span class="pre">p_tensor</span></code> with index <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">hour</span> <span class="pre">bin</span> <span class="pre">j,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p></li>
+<li><p><strong>step 2</strong> – split <code class="docutils literal notranslate"><span class="pre">p_arr</span></code> into slab groups according to <code class="docutils literal notranslate"><span class="pre">group_bins</span></code></p></li>
+<li><p><strong>step 3</strong> – transpose probability slabs into probability pillars <code class="docutils literal notranslate"><span class="pre">p_pillars</span></code> each with shape <code class="docutils literal notranslate"><span class="pre">(n_bins,</span> <span class="pre">n_base_in_bin)</span></code></p></li>
+<li><p><strong>step 4</strong> – recast <code class="docutils literal notranslate"><span class="pre">p_pillars</span></code> into <code class="docutils literal notranslate"><span class="pre">p_tensor</span></code> format, where p_tensor[i, j] loads probabilities of all base paths in bin i that are overlapping with bin j, i.e., <code class="docutils literal notranslate"><span class="pre">p(overlap</span> <span class="pre">with</span> <span class="pre">j</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">base</span> <span class="pre">in</span> <span class="pre">i)</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>p_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability array for <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p></li>
+<li><p><strong>p_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability array for <code class="docutils literal notranslate"><span class="pre">(base</span> <span class="pre">time</span> <span class="pre">k,</span> <span class="pre">hour</span> <span class="pre">bin</span> <span class="pre">i)</span></code></p></li>
 <li><p><strong>t0_base_groups</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – base timepoints grouped by hour bins</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor with index <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">hour</span> <span class="pre">bin</span> <span class="pre">j,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor with index <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">hour</span> <span class="pre">bin</span> <span class="pre">j,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p></li>
+<li><p><strong>p_pillars</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – list of <code class="docutils literal notranslate"><span class="pre">n_bins</span></code> probability pillars each with shape <code class="docutils literal notranslate"><span class="pre">(n_bins,</span> <span class="pre">n_base_in_bin)</span></code></p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<p>For loading bin 0, bin 1, base 42:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p_0_1_42</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="mi">42</span><span class="p">]</span>
+<p>For loading all base timepoints in bin i that overlap with bin j:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p_list</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+<span class="n">n_base_in_bin</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">p_tensor</span></code> and <code class="docutils literal notranslate"><span class="pre">p_pillars</span></code> are related by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span> <span class="o">==</span> <span class="n">p_pillars</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -341,51 +350,31 @@ order of anchors.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.get_corr_matrices">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_matrices" title="Link to this definition"></a></dt>
-<dd><p>_summary_</p>
+<dd><p>Compute entire correlation matrices from probability tensor.</p>
 <div class="admonition-auxiliary-functions admonition">
 <p class="admonition-title">Auxiliary functions:</p>
 <div class="line-block">
 <div class="line">╙── <a class="reference internal" href="#src.bundle.get_corr_matrices" title="src.bundle.get_corr_matrices"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a></div>
 <div class="line-block">
-<div class="line">└─╼ <a class="reference internal" href="#src.bundle.get_corr_of_one_interval_pair_ij" title="src.bundle.get_corr_of_one_interval_pair_ij"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_of_one_interval_pair_ij()</span></code></a></div>
+<div class="line">└─╼ <a class="reference internal" href="#src.bundle.get_one_cij_for_corr_matrices" title="src.bundle.get_one_cij_for_corr_matrices"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_one_cij_for_corr_matrices()</span></code></a></div>
 </div>
 </div>
 </div>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#src.bundle.get_corr_of_one_interval_pair_ij" title="src.bundle.get_corr_of_one_interval_pair_ij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_corr_of_one_interval_pair_ij</span></code></a>(i, j, p_tensor)</p></td>
-<td><p>_summary_</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.bundle.get_one_cij_for_corr_matrices" title="src.bundle.get_one_cij_for_corr_matrices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_one_cij_for_corr_matrices</span></code></a>(i, j, p_tensor)</p></td>
+<td><p>Compute one entry <code class="docutils literal notranslate"><span class="pre">c_ij</span></code> of correlation matrices from probability tensor.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="src.bundle.get_corr_of_one_interval_pair_ij">
-<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_of_one_interval_pair_ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ternary_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0.3333333333333333,</span> <span class="pre">0.6666666666666666,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_of_one_interval_pair_ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_of_one_interval_pair_ij" title="Link to this definition"></a></dt>
-<dd><p>_summary_</p>
-<p>Used in <a class="reference internal" href="#src.bundle.get_corr_matrices" title="src.bundle.get_corr_matrices"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>i</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – index of the first interval</p></li>
-<li><p><strong>j</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – index of the second interval</p></li>
-<li><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor</p></li>
-<li><p><strong>ternary_bins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <em>optional</em>) – _description_. Defaults to [0, 1 / 3, 2 / 3, 1].</p></li>
-</ul>
+<dd class="field-odd"><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor (see <a class="reference internal" href="#src.bundle.gen_p_tensor" title="src.bundle.gen_p_tensor"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_p_tensor()</span></code></a> for details)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>p_persist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – probability of finding a persist path from interval i to j</p></li>
-<li><p><strong>p_emerge</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – probability of finding an emerging path from interval i to j</p></li>
+<li><p><strong>persist_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – matrix of persistent path probabilities</p></li>
+<li><p><strong>emerge_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – matrix of emerging path probabilities</p></li>
 </ul>
 </dd>
 </dl>
@@ -413,6 +402,41 @@ order of anchors.</p></li>
 <dd class="field-odd"><p><strong>hour_bins_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Breakpoints with equal-duration intervals for all sessions.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.get_one_cij_for_corr_matrices">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_one_cij_for_corr_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ternary_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0.3333333333333333,</span> <span class="pre">0.6666666666666666,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_one_cij_for_corr_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_one_cij_for_corr_matrices" title="Link to this definition"></a></dt>
+<dd><p>Compute one entry <code class="docutils literal notranslate"><span class="pre">c_ij</span></code> of correlation matrices from probability tensor.</p>
+<p>Used in <a class="reference internal" href="#src.bundle.get_corr_matrices" title="src.bundle.get_corr_matrices"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step 1</strong> – For an hour bin i, isolate all overlapping paths with hour bins i and j with nonzero probability, i.e, <code class="docutils literal notranslate"><span class="pre">p_k(i|i)</span> <span class="pre">=</span> <span class="pre">p(overlap</span> <span class="pre">with</span> <span class="pre">bin</span> <span class="pre">i</span> <span class="pre">|</span> <span class="pre">base</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">bin</span> <span class="pre">i)</span></code> and <code class="docutils literal notranslate"><span class="pre">p_k(j|i)</span> <span class="pre">=</span> <span class="pre">p(overlap</span> <span class="pre">with</span> <span class="pre">bin</span> <span class="pre">j</span> <span class="pre">|</span> <span class="pre">base</span> <span class="pre">k</span> <span class="pre">in</span> <span class="pre">bin</span> <span class="pre">i)</span></code>.</p></li>
+<li><p><strong>step 2</strong> – Renormalize the probabilities so that <code class="docutils literal notranslate"><span class="pre">p_k(i|i)</span> <span class="pre">+</span> <span class="pre">p_k(j|i)</span> <span class="pre">=</span> <span class="pre">1</span></code>.</p></li>
+<li><p><strong>step 3</strong> – For each base path k, classify the renormalized probabilities into persistent or emerging paths based on <code class="docutils literal notranslate"><span class="pre">ternary_bins</span></code>; i.e., persistent paths have <code class="docutils literal notranslate"><span class="pre">p_k(j|i)</span></code> in <code class="docutils literal notranslate"><span class="pre">[1/3,</span> <span class="pre">2/3)</span></code>, and emerging paths have <code class="docutils literal notranslate"><span class="pre">p_k(j|i)</span></code> in <code class="docutils literal notranslate"><span class="pre">[2/3,</span> <span class="pre">1]</span></code> for <code class="docutils literal notranslate"><span class="pre">j&gt;i</span></code>.</p></li>
+<li><p><strong>step 4</strong> – Compute the fraction of persistent (<code class="docutils literal notranslate"><span class="pre">p_persist</span></code>) and emerging paths (<code class="docutils literal notranslate"><span class="pre">p_emerge</span></code>) by summing over all base paths k.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>i</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – index of the base hour bin</p></li>
+<li><p><strong>j</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – index of the target hour bin</p></li>
+<li><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor (see <a class="reference internal" href="#src.bundle.gen_p_tensor" title="src.bundle.gen_p_tensor"><code class="xref py py-func docutils literal notranslate"><span class="pre">gen_p_tensor()</span></code></a> for details)</p></li>
+<li><p><strong>ternary_bins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <em>optional</em>) – For classify whether a base path is persistent or emerging. Defaults to [0, 1/3, 2/3, 1].</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>p_persist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – probability of finding a persist path from interval i to j</p></li>
+<li><p><strong>p_emerge</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – probability of finding an emerging path from interval i to j</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">p_emerge</span></code> is <code class="docutils literal notranslate"><span class="pre">p_vanish</span></code> if <code class="docutils literal notranslate"><span class="pre">i&gt;j</span></code></p>
+</div>
 </dd></dl>
 
 <dl class="py function">

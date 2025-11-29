@@ -19,8 +19,8 @@
 from src.utils import *
 
 # %%
-func_dir = 'src.equal'
-func_name = 'gen_df_equal'
+func_dir = 'src.bundle'
+func_name = 'get_corr_matrices'
 func_name_all = get_all_function_names(func_dir)
 print_auxiliary_functions(func_name, func_name_all, func_dir)
 
