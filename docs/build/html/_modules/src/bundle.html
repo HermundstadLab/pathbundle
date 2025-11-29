@@ -77,6 +77,22 @@
 <div class="viewcode-block" id="get_all_base_t0_l">
 <a class="viewcode-back" href="../../src.html#src.bundle.get_all_base_t0_l">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_all_base_t0_l</span><span class="p">(</span><span class="n">df_equal</span><span class="p">,</span> <span class="n">l_bundle_max</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract all timepoints and their upper bounds of path length from equalized trajectory.</span>
+
+<span class="sd">    NOTE:</span>
+<span class="sd">        The upper bound ``l_bundle_max`` should be set to be longer than the longest repeatable path length. Default is 200, or ~50 tile widths.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_equal (pd.DataFrame): DataFrame containing equalized trajectory data</span>
+<span class="sd">        l_bundle_max (int): upper bound of the bundle length</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        t0_base_all (np.ndarray): all timepoints of equalize trajectory</span>
+<span class="sd">        bool_small_all (np.ndarray): to specify if a timepoint is small-diameter or not</span>
+<span class="sd">        l_base_max_all (np.ndarray): upper bound of path length for each timepoint</span>
+<span class="sd">        xy_all (np.ndarray): all ``(x,y)`` coordinates at each timepoint of equalized trajectory</span>
+<span class="sd">        xy_kdtree (KDTree): kdtree of ``(x,y)`` coordinates for fast neighbor search</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">t0_base_all</span> <span class="o">=</span> <span class="n">df_equal</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
     <span class="n">xy_all</span> <span class="o">=</span> <span class="n">df_equal</span><span class="p">[[</span><span class="s2">&quot;xg&quot;</span><span class="p">,</span> <span class="s2">&quot;yg&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span>
     <span class="n">xy_kdtree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">xy_all</span><span class="p">)</span>
@@ -94,6 +110,28 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_bundle_for_one_t0_base</span><span class="p">(</span>
     <span class="n">t0_base</span><span class="p">,</span> <span class="n">l_base_max</span><span class="p">,</span> <span class="n">xy_all</span><span class="p">,</span> <span class="n">xy_kdtree</span><span class="p">,</span> <span class="n">bool_small_all</span><span class="p">,</span> <span class="n">df_equal</span><span class="p">,</span> <span class="n">d_th</span><span class="p">,</span> <span class="n">l_th</span><span class="o">=</span><span class="mi">2</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;From equalized trajectory, a path bundle is extracted as paths overlapping with the base path at timepoint ``t0_base``</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        step 1: Load base path starting from ``(x_base, y_base)`` at ``t0_base``</span>
+<span class="sd">        step 2: Find all timepoints in the equalized trajectory that are within distance ``d_th`` of ``(x_base, y_base)``</span>
+<span class="sd">        step 3: Remove ``t0_overlap`` from self-overlap of the base path.</span>
+<span class="sd">        step 4: Split the overlapping timepoints into either small-diameter or not; to make sure small diameter paths only overlap with small diameter base paths, and vice versa.</span>
+<span class="sd">        step 5: For each overlapping timepoint, calculate the length of continuous overlap with the base path within distance ``d_th``</span>
+<span class="sd">    Args:</span>
+<span class="sd">        t0_base (int): base timepoint</span>
+<span class="sd">        l_base_max (int): upper bound of the bundle length</span>
+<span class="sd">        xy_all (np.ndarray): all (x,y) coordinates at each timepoint of equalized trajectory</span>
+<span class="sd">        xy_kdtree (KDTree): kdtree of (x,y) coordinates for fast neighbor search</span>
+<span class="sd">        bool_small_all (np.ndarray): to specify if a timepoint is small-diameter or not</span>
+<span class="sd">        df_equal (pd.DataFrame): DataFrame containing equalized trajectory data</span>
+<span class="sd">        d_th (float): distance threshold for neighbor search</span>
+<span class="sd">        l_th (int, optional): a path in a bundle must have at least this length. Defaults to 2.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        t0_overlap.astype(np.ndarray of int32):</span>
+<span class="sd">        l_overlap.astype(np.ndarray of int16):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># get filter based on whether base is small</span>
     <span class="n">is_base_small</span> <span class="o">=</span> <span class="n">bool_small_all</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_base_small</span><span class="p">:</span>
@@ -149,6 +187,18 @@
 <div class="viewcode-block" id="get_one_fixed_pair">
 <a class="viewcode-back" href="../../src.html#src.bundle.get_one_fixed_pair">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_one_fixed_pair</span><span class="p">(</span><span class="n">t0_base</span><span class="p">,</span> <span class="n">tl_overlap_dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    .. deprecated:: 1.0</span>
+<span class="sd">        This function is for a constrained shuffle control, which is not used in the released version of **pathbundle**.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t0_base (_type_): _description_</span>
+<span class="sd">        tl_overlap_dict (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># load</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">t0_overlap</span><span class="p">,</span> <span class="n">l_overlap</span> <span class="o">=</span> <span class="n">tl_overlap_dict</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
@@ -168,6 +218,22 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">shuffle_one_row</span><span class="p">(</span>
     <span class="n">t0_base</span><span class="p">,</span> <span class="n">bool_used</span><span class="p">,</span> <span class="n">pair_fixed_dict</span><span class="p">,</span> <span class="n">tl_overlap_dict</span><span class="p">,</span> <span class="n">l_base</span><span class="p">,</span> <span class="n">t_equal_max</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    .. deprecated:: 1.0</span>
+<span class="sd">        This function is for a constrained shuffle control, which is not used in the released version of **pathbundle**.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t0_base (_type_): _description_</span>
+<span class="sd">        bool_used (_type_): _description_</span>
+<span class="sd">        pair_fixed_dict (_type_): _description_</span>
+<span class="sd">        tl_overlap_dict (_type_): _description_</span>
+<span class="sd">        l_base (_type_): _description_</span>
+<span class="sd">        t_equal_max (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># load</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">t0_overlap</span><span class="p">,</span> <span class="n">l_overlap</span> <span class="o">=</span> <span class="n">tl_overlap_dict</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
@@ -202,9 +268,23 @@
 
 
 <span class="c1">## HOUR-TO-HOUR CORRELATION MATRIX</span>
-<div class="viewcode-block" id="get_equal_intervals_for_all_sessions">
-<a class="viewcode-back" href="../../src.html#src.bundle.get_equal_intervals_for_all_sessions">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_equal_intervals_for_all_sessions</span><span class="p">(</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">df_equal</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<div class="viewcode-block" id="get_equal_hourly_intervals_for_all_sessions">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_equal_hourly_intervals_for_all_sessions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_equal_hourly_intervals_for_all_sessions</span><span class="p">(</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">df_equal</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">3600</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute breakpoints with equal-duration intervals for all sessions.</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        step 1: For each session of the raw trajectory, compute equal-duration timepoints from start to end.</span>
+<span class="sd">        step 2: Proceed to compute all sessions and concatenate them.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_raw (pd.DataFrame): Raw trajectory data containing sessions and realtime.</span>
+<span class="sd">        df_equal (pd.DataFrame): Equalized trajectory data.</span>
+<span class="sd">        duration (int, optional): Duration (in seconds) for equal intervals. Defaults to 3600.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        hour_bins_equal (list of int): Breakpoints with equal-duration intervals for all sessions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># get t0, t1 of each session</span>
     <span class="n">n_sessions</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
     <span class="n">tt_sessions_realtime</span> <span class="o">=</span> <span class="p">[</span>
@@ -221,17 +301,35 @@
     <span class="p">]</span>
 
     <span class="c1"># trim off last and concatenate</span>
-    <span class="n">t_bins_equal</span> <span class="o">=</span> <span class="n">fl</span><span class="p">([</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_sessions_equal</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">)]</span>  <span class="c1"># v1</span>
-    <span class="n">t_bins_equal</span> <span class="o">=</span> <span class="n">fl</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_sessions_equal</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">t_bins_equal</span></div>
+    <span class="n">hour_bins_equal</span> <span class="o">=</span> <span class="n">fl</span><span class="p">([</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_sessions_equal</span><span class="p">])</span> <span class="o">+</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">df_equal</span><span class="p">)]</span>  <span class="c1"># v1</span>
+    <span class="n">hour_bins_equal</span> <span class="o">=</span> <span class="n">fl</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ttttt_sessions_equal</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">hour_bins_equal</span></div>
 
 
 
-<div class="viewcode-block" id="get_l_overlap_hist_for_one_bundle">
-<a class="viewcode-back" href="../../src.html#src.bundle.get_l_overlap_hist_for_one_bundle">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_l_overlap_hist_for_one_bundle</span><span class="p">(</span>
-    <span class="n">t0_base</span><span class="p">,</span> <span class="n">t0_base_all</span><span class="p">,</span> <span class="n">t0_overlap_all</span><span class="p">,</span> <span class="n">l_overlap_all</span><span class="p">,</span> <span class="n">t_bins</span><span class="p">,</span> <span class="n">l_th</span>
+<div class="viewcode-block" id="gen_one_column_of_p_array_from_bundle">
+<a class="viewcode-back" href="../../src.html#src.bundle.gen_one_column_of_p_array_from_bundle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_one_column_of_p_array_from_bundle</span><span class="p">(</span>
+    <span class="n">t0_base</span><span class="p">,</span> <span class="n">t0_base_all</span><span class="p">,</span> <span class="n">t0_overlap_all</span><span class="p">,</span> <span class="n">l_overlap_all</span><span class="p">,</span> <span class="n">hour_bins</span><span class="p">,</span> <span class="n">l_th</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a base path, compute total overlaps in each hourly bin ``hour_bins``.</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        step 1: Load path bundle of the base path at ``t0_base``.</span>
+<span class="sd">        step 2: Filter overlapping timepoints to keep only those within ``t0_base_all``; e.g., when considering only timepoints that is not small-diameter: ``t0_base_all = df_equal[~df_equal.is_small].index.values``.</span>
+<span class="sd">        step 3: Assign each overlapping timepoint to a hourly bin defined in ``hour_bins``</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t0_base (int): starting time of the base path</span>
+<span class="sd">        t0_base_all (list of int): valid timepoints to consider for overlap</span>
+<span class="sd">        t0_overlap_all (list of np.ndarray): overlapping timepoints for each base path</span>
+<span class="sd">        l_overlap_all (list of np.ndarray): overlap lengths for each base path</span>
+<span class="sd">        hour_bins (list of list of tuple): hourly bins for each session</span>
+<span class="sd">        l_th (int): minimum overlap length threshold</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        l_overlap_hist (np.ndarray): total overlaps in each hourly bin</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># load base</span>
     <span class="n">t0_overlap_list</span> <span class="o">=</span> <span class="n">t0_overlap_all</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
     <span class="n">l_overlap_list</span> <span class="o">=</span> <span class="n">l_overlap_all</span><span class="p">[</span><span class="n">t0_base</span><span class="p">]</span>
@@ -242,27 +340,67 @@
     <span class="n">l_overlap_r</span> <span class="o">=</span> <span class="n">l_overlap_list</span><span class="p">[</span><span class="n">bool_r</span><span class="p">]</span>
 
     <span class="c1"># assign t0_overlap to bins</span>
-    <span class="c1"># bin_overlap_list = np.digitize(t0_overlap_list, t_bins[1:-1]) # v1</span>
-    <span class="n">bin_overlap_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">t0_overlap_r</span><span class="p">,</span> <span class="n">fl</span><span class="p">(</span><span class="n">t_bins</span><span class="p">))</span>
+    <span class="n">bin_overlap_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">t0_overlap_r</span><span class="p">,</span> <span class="n">fl</span><span class="p">(</span><span class="n">hour_bins</span><span class="p">))</span>
 
-    <span class="c1"># keep only odd bins (even bins is out of t_bins)</span>
-    <span class="n">bins_kept</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">(</span><span class="n">t_bins</span><span class="p">)))[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+    <span class="c1"># keep only odd bins (even bins is outside of hour_bins)</span>
+    <span class="n">bins_kept</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">(</span><span class="n">hour_bins</span><span class="p">)))[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">l_overlap_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">l_overlap_r</span><span class="p">[</span><span class="n">bin_overlap_r</span> <span class="o">==</span> <span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bins_kept</span><span class="p">]</span>
 
-    <span class="c1"># get histogram for each bin</span>
+    <span class="c1"># get histogram for hour_bins</span>
     <span class="n">l_overlap_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">l_th</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l_overlap_groups</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">l_overlap_hist</span></div>
+    <span class="c1"># get p_column</span>
+    <span class="n">p_column</span> <span class="o">=</span> <span class="n">l_overlap_hist</span> <span class="o">/</span> <span class="p">(</span><span class="n">l_overlap_hist</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p_column</span></div>
 
 
 
-<span class="n">ternary_bins</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<div class="viewcode-block" id="gen_p_tensor">
+<a class="viewcode-back" href="../../src.html#src.bundle.gen_p_tensor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_p_tensor</span><span class="p">(</span><span class="n">p_arr</span><span class="p">,</span> <span class="n">t0_base_groups</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reshape p_array into p_tensor.</span>
+
+<span class="sd">    Algorithm:</span>
+<span class="sd">        step 1: Compute ``group_bins`` based on ``t0_base_groups``</span>
+<span class="sd">        step 2: split ``p_arr`` into pillar groups according to ``group_bins``</span>
+<span class="sd">        step 3: transpose each pillar group to form the probability tensor ``p_tensor`` with index ``(hour bin i, hour bin j, base time k)``</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p_arr (np.ndarray): probability array for ``(hour bin i, base time k)``</span>
+<span class="sd">        t0_base_groups (list of np.ndarray): base timepoints grouped by hour bins</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        p_tensor (list of np.ndarray): probability tensor with index ``(hour bin i, hour bin j, base time k)``</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        For loading bin 0, bin 1, base 42::</span>
+
+<span class="sd">            p_0_1_42 = p_tensor[0][1,42]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">group_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">t0_base_groups</span><span class="p">])</span>
+    <span class="n">p_tensor</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_arr</span><span class="p">[</span><span class="n">x</span><span class="p">:</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">group_bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">group_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+    <span class="k">return</span> <span class="n">p_tensor</span></div>
 
 
-<div class="viewcode-block" id="get_corr_for_one_intervals_ij">
-<a class="viewcode-back" href="../../src.html#src.bundle.get_corr_for_one_intervals_ij">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_corr_for_one_intervals_ij</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">p_tensor</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_corr_of_one_interval_pair_ij">
+<a class="viewcode-back" href="../../src.html#src.bundle.get_corr_of_one_interval_pair_ij">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_corr_of_one_interval_pair_ij</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">p_tensor</span><span class="p">,</span> <span class="n">ternary_bins</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    Used in :py:func:`get_corr_matrices`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        i (int): index of the first interval</span>
+<span class="sd">        j (int): index of the second interval</span>
+<span class="sd">        p_tensor (list of np.ndarray): probability tensor</span>
+<span class="sd">        ternary_bins (list, optional): _description_. Defaults to [0, 1 / 3, 2 / 3, 1].</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        p_persist (float): probability of finding a persist path from interval i to j</span>
+<span class="sd">        p_emerge (float): probability of finding an emerging path from interval i to j</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">p_i_sum</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">][[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">p_ii</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">p_i_sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">p_i_sum</span><span class="p">[</span><span class="n">p_i_sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
     <span class="n">count_dict</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">p_ii</span><span class="p">,</span> <span class="n">ternary_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
@@ -275,10 +413,27 @@
 <div class="viewcode-block" id="get_corr_matrices">
 <a class="viewcode-back" href="../../src.html#src.bundle.get_corr_matrices">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_corr_matrices</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+
+<span class="sd">    .. admonition:: Auxiliary functions:</span>
+
+<span class="sd">        .. line-block::</span>
+<span class="sd">            ╙── :py:func:`get_corr_matrices`</span>
+<span class="sd">                └─╼ :py:func:`get_corr_of_one_interval_pair_ij`</span>
+
+<span class="sd">    .. autosummary::</span>
+<span class="sd">        get_corr_of_one_interval_pair_ij</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p_tensor (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_: _description_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">persist_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">)))</span>
     <span class="n">emerge_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">)))</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p_tensor</span><span class="p">)),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">persist_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">emerge_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_corr_for_one_intervals_ij</span><span class="p">(</span>
+        <span class="n">persist_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">emerge_arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_corr_of_one_interval_pair_ij</span><span class="p">(</span>
             <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">p_tensor</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">persist_arr</span><span class="p">,</span> <span class="n">emerge_arr</span></div>

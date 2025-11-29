@@ -4,6 +4,22 @@ from src.metadata import *
 
 ## GET BUNDLE TRAJECTORY FROM DATA
 def get_all_base_t0_l(df_equal, l_bundle_max):
+    """Extract all timepoints and their upper bounds of path length from equalized trajectory.
+
+    NOTE:
+        The upper bound ``l_bundle_max`` should be set to be longer than the longest repeatable path length. Default is 200, or ~50 tile widths.
+
+    Args:
+        df_equal (pd.DataFrame): DataFrame containing equalized trajectory data
+        l_bundle_max (int): upper bound of the bundle length
+
+    Returns:
+        t0_base_all (np.ndarray): all timepoints of equalize trajectory
+        bool_small_all (np.ndarray): to specify if a timepoint is small-diameter or not
+        l_base_max_all (np.ndarray): upper bound of path length for each timepoint
+        xy_all (np.ndarray): all ``(x,y)`` coordinates at each timepoint of equalized trajectory
+        xy_kdtree (KDTree): kdtree of ``(x,y)`` coordinates for fast neighbor search
+    """
     t0_base_all = df_equal.index.values
     xy_all = df_equal[["xg", "yg"]].values
     xy_kdtree = KDTree(xy_all)
@@ -18,6 +34,28 @@ def get_all_base_t0_l(df_equal, l_bundle_max):
 def get_bundle_for_one_t0_base(
     t0_base, l_base_max, xy_all, xy_kdtree, bool_small_all, df_equal, d_th, l_th=2
 ):
+    """From equalized trajectory, a path bundle is extracted as paths overlapping with the base path at timepoint ``t0_base``
+
+    Algorithm:
+        step 1: Load base path starting from ``(x_base, y_base)`` at ``t0_base``
+        step 2: Find all timepoints in the equalized trajectory that are within distance ``d_th`` of ``(x_base, y_base)``
+        step 3: Remove ``t0_overlap`` from self-overlap of the base path.
+        step 4: Split the overlapping timepoints into either small-diameter or not; to make sure small diameter paths only overlap with small diameter base paths, and vice versa.
+        step 5: For each overlapping timepoint, calculate the length of continuous overlap with the base path within distance ``d_th``
+    Args:
+        t0_base (int): base timepoint
+        l_base_max (int): upper bound of the bundle length
+        xy_all (np.ndarray): all (x,y) coordinates at each timepoint of equalized trajectory
+        xy_kdtree (KDTree): kdtree of (x,y) coordinates for fast neighbor search
+        bool_small_all (np.ndarray): to specify if a timepoint is small-diameter or not
+        df_equal (pd.DataFrame): DataFrame containing equalized trajectory data
+        d_th (float): distance threshold for neighbor search
+        l_th (int, optional): a path in a bundle must have at least this length. Defaults to 2.
+
+    Returns:
+        t0_overlap.astype(np.ndarray of int32):
+        l_overlap.astype(np.ndarray of int16):
+    """
     # get filter based on whether base is small
     is_base_small = bool_small_all[t0_base]
     if not is_base_small:
@@ -70,6 +108,18 @@ def get_bundle_for_one_t0_base(
 
 ## CONSTRAINED SHUFFLE CONTROL
 def get_one_fixed_pair(t0_base, tl_overlap_dict):
+    """_summary_
+
+    .. deprecated:: 1.0
+        This function is for a constrained shuffle control, which is not used in the released version of **pathbundle**.
+
+    Args:
+        t0_base (_type_): _description_
+        tl_overlap_dict (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # load
     try:
         t0_overlap, l_overlap = tl_overlap_dict[t0_base]
@@ -86,6 +136,22 @@ def get_one_fixed_pair(t0_base, tl_overlap_dict):
 def shuffle_one_row(
     t0_base, bool_used, pair_fixed_dict, tl_overlap_dict, l_base, t_equal_max
 ):
+    """_summary_
+
+    .. deprecated:: 1.0
+        This function is for a constrained shuffle control, which is not used in the released version of **pathbundle**.
+
+    Args:
+        t0_base (_type_): _description_
+        bool_used (_type_): _description_
+        pair_fixed_dict (_type_): _description_
+        tl_overlap_dict (_type_): _description_
+        l_base (_type_): _description_
+        t_equal_max (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # load
     try:
         t0_overlap, l_overlap = tl_overlap_dict[t0_base]
@@ -119,7 +185,21 @@ def shuffle_one_row(
 
 
 ## HOUR-TO-HOUR CORRELATION MATRIX
-def get_equal_intervals_for_all_sessions(df_raw, df_equal, duration):
+def get_equal_hourly_intervals_for_all_sessions(df_raw, df_equal, duration=3600):
+    """Compute breakpoints with equal-duration intervals for all sessions.
+
+    Algorithm:
+        step 1: For each session of the raw trajectory, compute equal-duration timepoints from start to end.
+        step 2: Proceed to compute all sessions and concatenate them.
+
+    Args:
+        df_raw (pd.DataFrame): Raw trajectory data containing sessions and realtime.
+        df_equal (pd.DataFrame): Equalized trajectory data.
+        duration (int, optional): Duration (in seconds) for equal intervals. Defaults to 3600.
+
+    Returns:
+        hour_bins_equal (list of int): Breakpoints with equal-duration intervals for all sessions.
+    """
     # get t0, t1 of each session
     n_sessions = df_raw.session.nunique()
     tt_sessions_realtime = [
@@ -136,14 +216,32 @@ def get_equal_intervals_for_all_sessions(df_raw, df_equal, duration):
     ]
 
     # trim off last and concatenate
-    t_bins_equal = fl([x[:-1] for x in ttttt_sessions_equal]) + [len(df_equal)]  # v1
-    t_bins_equal = fl([list(zip(x[:-1], x[1:])) for x in ttttt_sessions_equal])
-    return t_bins_equal
+    hour_bins_equal = fl([x[:-1] for x in ttttt_sessions_equal]) + [len(df_equal)]  # v1
+    hour_bins_equal = fl([list(zip(x[:-1], x[1:])) for x in ttttt_sessions_equal])
+    return hour_bins_equal
 
 
-def get_l_overlap_hist_for_one_bundle(
-    t0_base, t0_base_all, t0_overlap_all, l_overlap_all, t_bins, l_th
+def gen_one_column_of_p_array_from_bundle(
+    t0_base, t0_base_all, t0_overlap_all, l_overlap_all, hour_bins, l_th
 ):
+    """Given a base path, compute total overlaps in each hourly bin ``hour_bins``.
+
+    Algorithm:
+        step 1: Load path bundle of the base path at ``t0_base``.
+        step 2: Filter overlapping timepoints to keep only those within ``t0_base_all``; e.g., when considering only timepoints that is not small-diameter: ``t0_base_all = df_equal[~df_equal.is_small].index.values``.
+        step 3: Assign each overlapping timepoint to a hourly bin defined in ``hour_bins``
+
+    Args:
+        t0_base (int): starting time of the base path
+        t0_base_all (list of int): valid timepoints to consider for overlap
+        t0_overlap_all (list of np.ndarray): overlapping timepoints for each base path
+        l_overlap_all (list of np.ndarray): overlap lengths for each base path
+        hour_bins (list of list of tuple): hourly bins for each session
+        l_th (int): minimum overlap length threshold
+
+    Returns:
+        l_overlap_hist (np.ndarray): total overlaps in each hourly bin
+    """
     # load base
     t0_overlap_list = t0_overlap_all[t0_base]
     l_overlap_list = l_overlap_all[t0_base]
@@ -154,24 +252,61 @@ def get_l_overlap_hist_for_one_bundle(
     l_overlap_r = l_overlap_list[bool_r]
 
     # assign t0_overlap to bins
-    # bin_overlap_list = np.digitize(t0_overlap_list, t_bins[1:-1]) # v1
-    bin_overlap_r = np.digitize(t0_overlap_r, fl(t_bins))
+    bin_overlap_r = np.digitize(t0_overlap_r, fl(hour_bins))
 
-    # keep only odd bins (even bins is out of t_bins)
-    bins_kept = np.arange(len(fl(t_bins)))[1::2]
+    # keep only odd bins (even bins is outside of hour_bins)
+    bins_kept = np.arange(len(fl(hour_bins)))[1::2]
     l_overlap_groups = [l_overlap_r[bin_overlap_r == x] for x in bins_kept]
 
-    # get histogram for each bin
+    # get histogram for hour_bins
     l_overlap_hist = np.array(
         [x[x >= l_th].sum() for x in l_overlap_groups], dtype=np.int16
     )
-    return l_overlap_hist
+    # get p_column
+    p_column = l_overlap_hist / (l_overlap_hist.sum() + 1e-12)
+    return p_column
 
 
-ternary_bins = [0, 1 / 3, 2 / 3, 1]
+def gen_p_tensor(p_arr, t0_base_groups):
+    """Reshape p_array into p_tensor.
+
+    Algorithm:
+        step 1: Compute ``group_bins`` based on ``t0_base_groups``
+        step 2: split ``p_arr`` into pillar groups according to ``group_bins``
+        step 3: transpose each pillar group to form the probability tensor ``p_tensor`` with index ``(hour bin i, hour bin j, base time k)``
+
+    Args:
+        p_arr (np.ndarray): probability array for ``(hour bin i, base time k)``
+        t0_base_groups (list of np.ndarray): base timepoints grouped by hour bins
+
+    Returns:
+        p_tensor (list of np.ndarray): probability tensor with index ``(hour bin i, hour bin j, base time k)``
+
+    Example:
+        For loading bin 0, bin 1, base 42::
+
+            p_0_1_42 = p_tensor[0][1,42]
+    """
+    group_bins = np.cumsum([0] + [len(x) for x in t0_base_groups])
+    p_tensor = [p_arr[x:y].T for x, y in zip(group_bins[:-1], group_bins[1:])]
+    return p_tensor
 
 
-def get_corr_for_one_intervals_ij(i, j, p_tensor):
+def get_corr_of_one_interval_pair_ij(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3, 1]):
+    """_summary_
+
+    Used in :py:func:`get_corr_matrices`.
+
+    Args:
+        i (int): index of the first interval
+        j (int): index of the second interval
+        p_tensor (list of np.ndarray): probability tensor
+        ternary_bins (list, optional): _description_. Defaults to [0, 1 / 3, 2 / 3, 1].
+
+    Returns:
+        p_persist (float): probability of finding a persist path from interval i to j
+        p_emerge (float): probability of finding an emerging path from interval i to j
+    """
     p_i_sum = p_tensor[i][[i, j]].sum(0)
     p_ii = p_tensor[i][i][p_i_sum > 0] / p_i_sum[p_i_sum > 0]
     count_dict = Counter(np.digitize(p_ii, ternary_bins[1:-1]))
@@ -181,10 +316,27 @@ def get_corr_for_one_intervals_ij(i, j, p_tensor):
 
 
 def get_corr_matrices(p_tensor):
+    """_summary_
+
+    .. admonition:: Auxiliary functions:
+
+        .. line-block::
+            ╙── :py:func:`get_corr_matrices`
+                └─╼ :py:func:`get_corr_of_one_interval_pair_ij`
+
+    .. autosummary::
+        get_corr_of_one_interval_pair_ij
+
+    Args:
+        p_tensor (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     persist_arr = np.zeros((len(p_tensor), len(p_tensor)))
     emerge_arr = np.zeros((len(p_tensor), len(p_tensor)))
     for i, j in product(range(len(p_tensor)), repeat=2):
-        persist_arr[i, j], emerge_arr[i, j] = get_corr_for_one_intervals_ij(
+        persist_arr[i, j], emerge_arr[i, j] = get_corr_of_one_interval_pair_ij(
             i, j, p_tensor
         )
     return persist_arr, emerge_arr

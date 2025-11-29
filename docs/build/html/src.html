@@ -52,12 +52,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-src.bundle">src.bundle</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.gen_one_column_of_p_array_from_bundle"><code class="docutils literal notranslate"><span class="pre">gen_one_column_of_p_array_from_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.gen_p_tensor"><code class="docutils literal notranslate"><span class="pre">gen_p_tensor()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_all_base_t0_l"><code class="docutils literal notranslate"><span class="pre">get_all_base_t0_l()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_bundle_for_one_t0_base"><code class="docutils literal notranslate"><span class="pre">get_bundle_for_one_t0_base()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_for_one_intervals_ij"><code class="docutils literal notranslate"><span class="pre">get_corr_for_one_intervals_ij()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_matrices"><code class="docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_equal_intervals_for_all_sessions"><code class="docutils literal notranslate"><span class="pre">get_equal_intervals_for_all_sessions()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_l_overlap_hist_for_one_bundle"><code class="docutils literal notranslate"><span class="pre">get_l_overlap_hist_for_one_bundle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_corr_of_one_interval_pair_ij"><code class="docutils literal notranslate"><span class="pre">get_corr_of_one_interval_pair_ij()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_equal_hourly_intervals_for_all_sessions"><code class="docutils literal notranslate"><span class="pre">get_equal_hourly_intervals_for_all_sessions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.get_one_fixed_pair"><code class="docutils literal notranslate"><span class="pre">get_one_fixed_pair()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#src.bundle.shuffle_one_row"><code class="docutils literal notranslate"><span class="pre">shuffle_one_row()</span></code></a></li>
 </ul>
@@ -219,44 +220,244 @@ order of anchors.</p></li>
 <section id="module-src.bundle">
 <span id="src-bundle"></span><h2>src.bundle<a class="headerlink" href="#module-src.bundle" title="Link to this heading"></a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.gen_one_column_of_p_array_from_bundle">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">gen_one_column_of_p_array_from_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_base_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_overlap_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_overlap_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hour_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_th</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#gen_one_column_of_p_array_from_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.gen_one_column_of_p_array_from_bundle" title="Link to this definition"></a></dt>
+<dd><p>Given a base path, compute total overlaps in each hourly bin <code class="docutils literal notranslate"><span class="pre">hour_bins</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step 1</strong> – Load path bundle of the base path at <code class="docutils literal notranslate"><span class="pre">t0_base</span></code>.</p></li>
+<li><p><strong>step 2</strong> – Filter overlapping timepoints to keep only those within <code class="docutils literal notranslate"><span class="pre">t0_base_all</span></code>; e.g., when considering only timepoints that is not small-diameter: <code class="docutils literal notranslate"><span class="pre">t0_base_all</span> <span class="pre">=</span> <span class="pre">df_equal[~df_equal.is_small].index.values</span></code>.</p></li>
+<li><p><strong>step 3</strong> – Assign each overlapping timepoint to a hourly bin defined in <code class="docutils literal notranslate"><span class="pre">hour_bins</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>t0_base</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – starting time of the base path</p></li>
+<li><p><strong>t0_base_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – valid timepoints to consider for overlap</p></li>
+<li><p><strong>t0_overlap_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – overlapping timepoints for each base path</p></li>
+<li><p><strong>l_overlap_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – overlap lengths for each base path</p></li>
+<li><p><strong>hour_bins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>) – hourly bins for each session</p></li>
+<li><p><strong>l_th</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – minimum overlap length threshold</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>l_overlap_hist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – total overlaps in each hourly bin</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.bundle.gen_p_tensor">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">gen_p_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_base_groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#gen_p_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.gen_p_tensor" title="Link to this definition"></a></dt>
+<dd><p>Reshape p_array into p_tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step 1</strong> – Compute <code class="docutils literal notranslate"><span class="pre">group_bins</span></code> based on <code class="docutils literal notranslate"><span class="pre">t0_base_groups</span></code></p></li>
+<li><p><strong>step 2</strong> – split <code class="docutils literal notranslate"><span class="pre">p_arr</span></code> into pillar groups according to <code class="docutils literal notranslate"><span class="pre">group_bins</span></code></p></li>
+<li><p><strong>step 3</strong> – transpose each pillar group to form the probability tensor <code class="docutils literal notranslate"><span class="pre">p_tensor</span></code> with index <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">hour</span> <span class="pre">bin</span> <span class="pre">j,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>p_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability array for <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p></li>
+<li><p><strong>t0_base_groups</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – base timepoints grouped by hour bins</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor with index <code class="docutils literal notranslate"><span class="pre">(hour</span> <span class="pre">bin</span> <span class="pre">i,</span> <span class="pre">hour</span> <span class="pre">bin</span> <span class="pre">j,</span> <span class="pre">base</span> <span class="pre">time</span> <span class="pre">k)</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>For loading bin 0, bin 1, base 42:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p_0_1_42</span> <span class="o">=</span> <span class="n">p_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">,</span><span class="mi">42</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.get_all_base_t0_l">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_all_base_t0_l</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_bundle_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_all_base_t0_l"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_all_base_t0_l" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Extract all timepoints and their upper bounds of path length from equalized trajectory.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The upper bound <code class="docutils literal notranslate"><span class="pre">l_bundle_max</span></code> should be set to be longer than the longest repeatable path length. Default is 200, or ~50 tile widths.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – DataFrame containing equalized trajectory data</p></li>
+<li><p><strong>l_bundle_max</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – upper bound of the bundle length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>t0_base_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – all timepoints of equalize trajectory</p></li>
+<li><p><strong>bool_small_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – to specify if a timepoint is small-diameter or not</p></li>
+<li><p><strong>l_base_max_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – upper bound of path length for each timepoint</p></li>
+<li><p><strong>xy_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – all <code class="docutils literal notranslate"><span class="pre">(x,y)</span></code> coordinates at each timepoint of equalized trajectory</p></li>
+<li><p><strong>xy_kdtree</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">KDTree</span></code>) – kdtree of <code class="docutils literal notranslate"><span class="pre">(x,y)</span></code> coordinates for fast neighbor search</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.get_bundle_for_one_t0_base">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_bundle_for_one_t0_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_base_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xy_kdtree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool_small_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_th</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_bundle_for_one_t0_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_bundle_for_one_t0_base" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="src.bundle.get_corr_for_one_intervals_ij">
-<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_for_one_intervals_ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_for_one_intervals_ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_for_one_intervals_ij" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>From equalized trajectory, a path bundle is extracted as paths overlapping with the base path at timepoint <code class="docutils literal notranslate"><span class="pre">t0_base</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step 1</strong> – Load base path starting from <code class="docutils literal notranslate"><span class="pre">(x_base,</span> <span class="pre">y_base)</span></code> at <code class="docutils literal notranslate"><span class="pre">t0_base</span></code></p></li>
+<li><p><strong>step 2</strong> – Find all timepoints in the equalized trajectory that are within distance <code class="docutils literal notranslate"><span class="pre">d_th</span></code> of <code class="docutils literal notranslate"><span class="pre">(x_base,</span> <span class="pre">y_base)</span></code></p></li>
+<li><p><strong>step 3</strong> – Remove <code class="docutils literal notranslate"><span class="pre">t0_overlap</span></code> from self-overlap of the base path.</p></li>
+<li><p><strong>step 4</strong> – Split the overlapping timepoints into either small-diameter or not; to make sure small diameter paths only overlap with small diameter base paths, and vice versa.</p></li>
+<li><p><strong>step 5</strong> – For each overlapping timepoint, calculate the length of continuous overlap with the base path within distance <code class="docutils literal notranslate"><span class="pre">d_th</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>t0_base</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – base timepoint</p></li>
+<li><p><strong>l_base_max</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – upper bound of the bundle length</p></li>
+<li><p><strong>xy_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – all (x,y) coordinates at each timepoint of equalized trajectory</p></li>
+<li><p><strong>xy_kdtree</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">KDTree</span></code>) – kdtree of (x,y) coordinates for fast neighbor search</p></li>
+<li><p><strong>bool_small_all</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – to specify if a timepoint is small-diameter or not</p></li>
+<li><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – DataFrame containing equalized trajectory data</p></li>
+<li><p><strong>d_th</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – distance threshold for neighbor search</p></li>
+<li><p><strong>l_th</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – a path in a bundle must have at least this length. Defaults to 2.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0_overlap.astype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>)</p></li>
+<li><p><strong>l_overlap.astype</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.get_corr_matrices">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_matrices" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>_summary_</p>
+<div class="admonition-auxiliary-functions admonition">
+<p class="admonition-title">Auxiliary functions:</p>
+<div class="line-block">
+<div class="line">╙── <a class="reference internal" href="#src.bundle.get_corr_matrices" title="src.bundle.get_corr_matrices"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a></div>
+<div class="line-block">
+<div class="line">└─╼ <a class="reference internal" href="#src.bundle.get_corr_of_one_interval_pair_ij" title="src.bundle.get_corr_of_one_interval_pair_ij"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_of_one_interval_pair_ij()</span></code></a></div>
+</div>
+</div>
+</div>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#src.bundle.get_corr_of_one_interval_pair_ij" title="src.bundle.get_corr_of_one_interval_pair_ij"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_corr_of_one_interval_pair_ij</span></code></a>(i, j, p_tensor)</p></td>
+<td><p>_summary_</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="src.bundle.get_equal_intervals_for_all_sessions">
-<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_equal_intervals_for_all_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_equal_intervals_for_all_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_equal_intervals_for_all_sessions" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="src.bundle.get_corr_of_one_interval_pair_ij">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_corr_of_one_interval_pair_ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ternary_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">0.3333333333333333,</span> <span class="pre">0.6666666666666666,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_corr_of_one_interval_pair_ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_corr_of_one_interval_pair_ij" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<p>Used in <a class="reference internal" href="#src.bundle.get_corr_matrices" title="src.bundle.get_corr_matrices"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corr_matrices()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – index of the first interval</p></li>
+<li><p><strong>j</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – index of the second interval</p></li>
+<li><p><strong>p_tensor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – probability tensor</p></li>
+<li><p><strong>ternary_bins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <em>optional</em>) – _description_. Defaults to [0, 1 / 3, 2 / 3, 1].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>p_persist</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – probability of finding a persist path from interval i to j</p></li>
+<li><p><strong>p_emerge</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – probability of finding an emerging path from interval i to j</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="src.bundle.get_l_overlap_hist_for_one_bundle">
-<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_l_overlap_hist_for_one_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_base_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t0_overlap_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_overlap_all</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_bins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_th</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_l_overlap_hist_for_one_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_l_overlap_hist_for_one_bundle" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="src.bundle.get_equal_hourly_intervals_for_all_sessions">
+<span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_equal_hourly_intervals_for_all_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_equal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_equal_hourly_intervals_for_all_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_equal_hourly_intervals_for_all_sessions" title="Link to this definition"></a></dt>
+<dd><p>Compute breakpoints with equal-duration intervals for all sessions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Algorithm<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step 1</strong> – For each session of the raw trajectory, compute equal-duration timepoints from start to end.</p></li>
+<li><p><strong>step 2</strong> – Proceed to compute all sessions and concatenate them.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>df_raw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – Raw trajectory data containing sessions and realtime.</p></li>
+<li><p><strong>df_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pd.DataFrame</span></code>) – Equalized trajectory data.</p></li>
+<li><p><strong>duration</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em>) – Duration (in seconds) for equal intervals. Defaults to 3600.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hour_bins_equal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Breakpoints with equal-duration intervals for all sessions.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.get_one_fixed_pair">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">get_one_fixed_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tl_overlap_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#get_one_fixed_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.get_one_fixed_pair" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>_summary_</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0: </span>This function is for a constrained shuffle control, which is not used in the released version of <strong>pathbundle</strong>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0_base</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>tl_overlap_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.bundle.shuffle_one_row">
 <span class="sig-prename descclassname"><span class="pre">src.bundle.</span></span><span class="sig-name descname"><span class="pre">shuffle_one_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool_used</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pair_fixed_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tl_overlap_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_equal_max</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/bundle.html#shuffle_one_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.bundle.shuffle_one_row" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>_summary_</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 1.0: </span>This function is for a constrained shuffle control, which is not used in the released version of <strong>pathbundle</strong>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0_base</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>bool_used</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>pair_fixed_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>tl_overlap_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>l_base</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+<li><p><strong>t_equal_max</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">_type_</span></code>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>_type_</strong> – _description_</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-src.equal">
