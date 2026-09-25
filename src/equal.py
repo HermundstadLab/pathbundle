@@ -469,13 +469,16 @@ def gen_df_equal(df_raw, d_downsampl, upsampl_fac=2):
     # df_equal["tile"] = df_equal["tile"].astype("int")
     df_equal["session"] = df_equal["session"].astype("int")
     df_equal["t_raw"] = df_equal["t_raw"].astype("int")
-    df_equal.index = range(len(df_equal))
+    # df_equal.index = range(len(df_equal))
 
     # remove zero velocity from upsampling
     vg_traj = (np.diff(df_equal[["xg", "yg"]].values, axis=0) ** 2).sum(-1) ** 0.5
     is_zero = np.zeros(len(df_equal))
     is_zero[np.where(vg_traj == 0)[0] + 1] = 1
     df_equal = df_equal.loc[is_zero == 0]
+
+    # add tile_id
+    df_equal["tile_id"] = df_raw.loc[df_equal.t_raw].tile_id.values
 
     # final update index of df_equal
     df_equal.index = range(len(df_equal))

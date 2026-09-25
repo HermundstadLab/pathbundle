@@ -37,4 +37,4 @@ Run `scripts/*.ipynb`  in the following series:
 
 
 ## View Documentation
-1. Open the html file in `treesegm/docs/build/html/index.html`
+1. Open the html file in `pathbundle/docs/build/html/index.html`
