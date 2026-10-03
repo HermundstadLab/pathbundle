@@ -365,3 +365,15 @@ def print_auxiliary_functions(func_name, func_name_all, func_dir):
     print("\n.. autosummary::")
     for x in list(G)[1:]:
         print(f"    {x}")
+
+
+
+## STAT
+def get_confidence_interval(x, axis):
+    """c=1.96 for 95% CI"""
+    x = np.array(x)
+    mean = np.nanmean(x, axis=axis)
+    std = np.nanstd(x, axis=axis)
+    n_samples = np.sum(~np.isnan(x), axis=axis)
+    ci = 1.96 * std / np.sqrt(n_samples)
+    return ci, mean, std

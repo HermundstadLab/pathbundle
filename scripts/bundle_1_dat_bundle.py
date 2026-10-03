@@ -45,7 +45,7 @@ from src.bundle import *
 # ## BASH PARAMETERS
 
 # %%
-mouse_id = 3 #int(sys.argv[1])
+mouse_id = 18 #int(sys.argv[1])
 
 # %%
 tag = f"mouse_{mouse_id}"
@@ -67,7 +67,7 @@ df_equal = pickle.load(open(in_dir / "df_equal", "rb"))
 
 # variables
 t_equal_max = len(df_equal)
-n_sessions = n_sessions_dict[mouse_id]
+n_sessions = 3 #n_sessions_dict[mouse_id]
 t_session_list = [df_equal[df_equal["session"] == x].index[0] for x in range(n_sessions)]
 t_session_middle = np.array(t_session_list) + np.diff(t_session_list + [t_equal_max])/2
 
@@ -78,19 +78,27 @@ t_session_middle = np.array(t_session_list) + np.diff(t_session_list + [t_equal_
 d_pair_th = d_tile / fs_pair_th
 
 # %% [markdown]
+# ## LOCAL PARAMETERS
+
+# %%
+sessions_select = [0,1,2]
+dff_equal = df_equal[df_equal.session.isin(sessions_select)]
+len(dff_equal), len(df_equal)
+
+# %% [markdown]
 # ## RUN: get overlapping paths
 
 # %%
-## MP (3m; 15m)
+## MP (mouse 3, 3 days: 4m)
 # prep
-t0_base_all, bool_small_all, l_base_max_all, xy_all, xy_kdtree = get_all_base_t0_l(df_equal, l_bundle_max)
+t0_base_all, bool_small_all, l_base_max_all, xy_all, xy_kdtree = get_all_base_t0_l(dff_equal, l_bundle_max)
 
 # mp
 def run_mp(t0_l_base):
     # load
     t0_base, l_base_max = t0_l_base
     try:
-        t0_overlap, l_overlap = get_bundle_for_one_t0_base(t0_base, l_base_max, xy_all, xy_kdtree, bool_small_all, df_equal, d_pair_th)
+        t0_overlap, l_overlap = get_bundle_for_one_t0_base(t0_base, l_base_max, xy_all, xy_kdtree, bool_small_all, dff_equal, d_pair_th)
         return t0_overlap, l_overlap
     except Exception as e:
         print(f"Error processing t0_base {t0_base}: {e}")
@@ -135,7 +143,7 @@ plt.legend()
 np.where((l_max_all>=60) & (~bool_small_all))[0][:50]
 
 # %%
-t0_base = 8297 # 268477, 284243
+t0_base = 22345 # 268477, 284243
 idx_base = t0_base_all.tolist().index(t0_base)
 
 t0_select, l_select = t0_overlap_all[idx_base], l_overlap_all[idx_base]
@@ -154,7 +162,7 @@ plt.ylabel("path length")
 
 
 plt.subplot(122)
-img = img_dict[(mouse_id, 0)]
+img = img_dict[(3, 0)]
 plt.imshow(img, zorder=0, alpha=0.3, origin="lower")
 plt.plot(*xy_bundle.T, lw=.5, c='k')
 plt.plot(*df_equal.loc[range(t0_base, t0_base+max(l_select)), ['xg', 'yg']].values.T, lw=.5, c='r')

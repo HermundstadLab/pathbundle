@@ -2,8 +2,8 @@
 1. Download and install [miniconda](https://www.anaconda.com/download) (NOTE: No need to sign up anything!)
 2. Create a new environment for the project
 ```shell
-$ conda create --name treesegm python=3.13
-$ conda activate treesegm
+$ conda create --name pathbundle python=3.13
+$ conda activate pathbundle
 ```
 3. install packages
 ```shell
@@ -13,7 +13,7 @@ $ conda install -c conda-forge ipython ipykernel nbformat sphinx sphinx-rtd-them
 ## Install `src` Folder (Source Codes)
 ```shell
 $ cd /dir_to_project_folder
-$ conda activate treesegm
+$ conda activate pathbundle
 $ pip install -e .
 ```
 
@@ -34,6 +34,7 @@ Run `scripts/*.ipynb`  in the following series:
 1. `align_1,2`
 2. `equal_1,2`
 3. `bundle_1,2`
+4. `fig_1`
 
 
 ## View Documentation

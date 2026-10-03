@@ -7,7 +7,7 @@ project_dir = Path(__file__).parent.parent
 bigdata_dir = project_dir / "bigdata"
 
 ## BASH PARAMETERS
-mouse_ids = [3, 10]
+mouse_ids = [3,4,5,16,18,19,20]
 
 ## GLOBAL PARAMETERS
 # UTILS

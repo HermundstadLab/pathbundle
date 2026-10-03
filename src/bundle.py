@@ -32,7 +32,7 @@ def get_all_base_t0_l(df_equal, l_bundle_max):
 
 
 def get_bundle_for_one_t0_base(
-    t0_base, l_base_max, xy_all, xy_kdtree, bool_small_all, df_equal, d_th, l_th=2
+    t0_base, l_base_max, xy_all, xy_kdtree, bool_small_all, df_equal, d_th, l_th=1
 ):
     """From equalized trajectory, a path bundle is extracted as paths overlapping with the base path at timepoint ``t0_base``
 
@@ -50,7 +50,7 @@ def get_bundle_for_one_t0_base(
         bool_small_all (np.ndarray): to specify if a timepoint is small-diameter or not
         df_equal (pd.DataFrame): DataFrame containing equalized trajectory data
         d_th (float): distance threshold for neighbor search
-        l_th (int, optional): a path in a bundle must have at least this length. Defaults to 2.
+        l_th (int, optional): a path in a bundle must have at least this length. Defaults to 1.
 
     Returns:
         t0_overlap.astype(np.ndarray of int32):
@@ -184,7 +184,7 @@ def shuffle_one_row(
     return t0_overlap_1, l_overlap_1
 
 
-## HOUR-TO-HOUR CORRELATION MATRIX
+## HOUR-TO-HOUR CORRELATION MATRIX V1
 def get_equal_hourly_intervals_for_all_sessions(df_raw, df_equal, duration=3600):
     """Compute breakpoints with equal-duration intervals for all sessions.
 
@@ -269,6 +269,8 @@ def gen_one_column_of_p_array_from_bundle(
 
 def gen_p_tensor(p_arr, t0_base_groups):
     """Reshape p_array into ``p_tensor`` and ``p_pillars``.
+    
+    .. deprecated:: 1.0
 
     Algorithm:
         step 1: Compute ``group_bins`` based on ``t0_base_groups``
@@ -303,31 +305,10 @@ def gen_p_tensor(p_arr, t0_base_groups):
     return p_tensor, p_pillars
 
 
-# def get_one_cij_for_corr_matrices(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3, 1]):
-#     """_summary_
-
-#     Used in :py:func:`get_corr_matrices`.
-
-#     Args:
-#         i (int): index of the first interval
-#         j (int): index of the second interval
-#         p_tensor (list of np.ndarray): probability tensor
-#         ternary_bins (list, optional): _description_. Defaults to [0, 1 / 3, 2 / 3, 1].
-
-#     Returns:
-#         p_persist (float): probability of finding a persist path from interval i to j
-#         p_emerge (float): probability of finding an emerging path from interval i to j
-#     """
-#     p_i_sum = p_tensor[i][[i, j]].sum(0)
-#     p_ii = p_tensor[i][i][p_i_sum > 0] / p_i_sum[p_i_sum > 0]
-#     count_dict = Counter(np.digitize(p_ii, ternary_bins[1:-1]))
-#     p_persist = count_dict[1] / len(p_ii)
-#     p_emerge = count_dict[2] / len(p_ii)  # vanishing if i>j
-#     return p_persist, p_emerge
-
-
 def get_one_cij_for_corr_matrices(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3, 1]):
     """Compute one entry ``c_ij`` of correlation matrices from probability tensor.
+    
+    .. deprecated:: 1.0
 
     Used in :py:func:`get_corr_matrices`.
 
@@ -362,6 +343,8 @@ def get_one_cij_for_corr_matrices(i, j, p_tensor, ternary_bins=[0, 1 / 3, 2 / 3,
 
 def get_corr_matrices(p_tensor):
     """Compute entire correlation matrices from probability tensor.
+    
+    .. deprecated:: 1.0
 
     .. admonition:: Auxiliary functions:
 
@@ -386,3 +369,75 @@ def get_corr_matrices(p_tensor):
             i, j, p_tensor
         )
     return persist_arr, emerge_arr
+
+
+## PATHBUNDLE DISTANCE MATRIX
+def get_tt_bins_equal(n_bins_sessions, df_equal):
+    """NOTE: The condition df_equal.index <= t_upper is to handle a bug that some df_equal.realtime is not monotonically increasing"""
+    
+    # load
+    n_sessions = len(n_bins_sessions)
+
+    # get t_bins_sessions
+    rt_upper_sessions = [int(df_equal[df_equal.session==x].realtime.max()) for x in range(n_sessions)]
+    t_equal_upper_sessions = [int(df_equal[df_equal.session==x].realtime.idxmax()) for x in range(n_sessions)]
+    #
+    t_bins_sessions = [np.linspace(0,x,n+1).astype(int) for n,x in zip(n_bins_sessions, rt_upper_sessions)]
+
+    # get tt_bins_sessions
+    t_bins_equal_sessions = [[(df_equal[(df_equal.session==x) & (df_equal.index <= t_upper)].realtime - y).abs().idxmin() for y in tbins] for x, (tbins, t_upper) in enumerate(zip(t_bins_sessions, t_equal_upper_sessions))]
+    tt_bins_equal = fl([list(zip(x[:-1], x[1:])) for x in t_bins_equal_sessions])
+    return tt_bins_equal
+
+
+def remove_overlapping_events(t0_list, l_th):
+    if len(t0_list)==0: 
+        return t0_list
+    else:
+        t0_list_r = [t0_list[0]]
+        for x in t0_list[1:]:
+            if x - t0_list_r[-1] >= l_th:
+                t0_list_r.append(x)
+        return t0_list_r
+
+
+def get_n_bundled_paths_for_one_base(i, j, t0_base, l_th, t0_bundle_all, l_bundle_all, tt_bins_select):
+    # load
+    t0_bundle, l_bundle = t0_bundle_all[t0_base], l_bundle_all[t0_base]
+    
+    # remove paths shorter than l_th
+    t0_bundle_r = t0_bundle[l_bundle>=l_th]
+    bin_bundle_r = (np.digitize(t0_bundle_r, fl(tt_bins_select)) - 1)/2
+    
+    # get t0 for intervals i & j
+    t0_i = t0_bundle_r[bin_bundle_r==i]
+    t0_j = t0_bundle_r[bin_bundle_r==j]
+    
+    # filter overlapping events due to finite l_th
+    t0_i_r = remove_overlapping_events(t0_i, l_th)
+    t0_j_r = remove_overlapping_events(t0_j, l_th)
+    
+    # count
+    n_paths_i = len(t0_i_r) + 1 # +1 for adding back self
+    n_paths_j = len(t0_j_r) + (i==j)
+    return n_paths_i, n_paths_j
+
+
+def get_pathbundle_distance(i, j, l_th, t0_bundle_all, l_bundle_all, tt_bins_select, t0_base_all):
+    # get base paths for intervals i and j
+    # t0_base_list_i = np.arange(*tt_bins_select[i])
+    # t0_base_list_j = np.arange(*tt_bins_select[j])
+    t0_base_list_i = t0_base_all[np.isin(t0_base_all, range(*tt_bins_select[i]))]
+    t0_base_list_j = t0_base_all[np.isin(t0_base_all, range(*tt_bins_select[j]))]
+    if len(t0_base_list_i) == 0 or len(t0_base_list_j) == 0:
+        return np.nan
+
+    # get number of bundled paths for each base in intervals i and j
+    n_paths_list_ii, n_paths_list_ij = np.array([get_n_bundled_paths_for_one_base(i, j, x, l_th, t0_bundle_all, l_bundle_all, tt_bins_select) for x in t0_base_list_i]).T
+    n_paths_list_jj, n_paths_list_ji = np.array([get_n_bundled_paths_for_one_base(j, i, x, l_th, t0_bundle_all, l_bundle_all, tt_bins_select) for x in t0_base_list_j]).T
+
+    # compute d_PB
+    f_ii, f_ij = n_paths_list_ii.sum(), n_paths_list_ij.sum()
+    f_ji, f_jj = n_paths_list_ji.sum(), n_paths_list_jj.sum()
+    d_PB = 1 - (f_ij+f_ji) / (f_ii*f_jj)**.5 / 2
+    return d_PB
